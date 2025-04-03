@@ -4,9 +4,9 @@ public class Player extends Entity{
     int money;
     List<Item> inventory = new ArrayList<>();
     
-    public Player(String name, int[] stats, int money, List<Item> inventory){
+    public Player(String name, int hp, int atk, int def, EntityClass entityClass, int money, List<Item> inventory){
+        super(name, hp, atk, def, entityClass);
         this.name = name;
-        this.stats = stats;
         this.money = money;
         this.inventory = inventory;
     }
