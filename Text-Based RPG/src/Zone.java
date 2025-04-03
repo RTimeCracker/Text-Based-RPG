@@ -6,15 +6,17 @@ enum ZoneType{
 
 public class Zone {
     ZoneType zoneType;
-    int areaNumber;
+    int zoneNumber;
     static List<Zone> zones = new ArrayList<>();
 
-    int xPos, yPos;
+    private int xPos, yPos;
 
 
-    public Zone(ZoneType zoneType){
+    public Zone(ZoneType zoneType, int xPos, int yPos){
         this.zoneType = zoneType;
-        this.areaNumber = zones.size();
+        this.zoneNumber = zones.size();
+        this.xPos = xPos;
+        this.yPos = yPos;
         zones.add(this);
     }
 
@@ -25,6 +27,10 @@ public class Zone {
             }
         }
         return null;
+    }
+
+    public static int[] getZonePosition(Zone zone){
+        return new int[]{zone.xPos, zone.yPos};
     }
 
 }

@@ -8,7 +8,9 @@ public class Player extends Entity {
     private int expToNextLevel;
     private int money;
     private List<Item> inventory;
-    private Zone currentZone;
+    
+    Zone zone;
+    private int xPos = 0, yPos = 0;
 
     public Player(String name, int money, EntityClass playerClass) {
         super(name, 0, 0, 0, playerClass); // Initialize with 0 stats, will be set based on class
@@ -17,6 +19,7 @@ public class Player extends Entity {
         this.expToNextLevel = 100;
         this.money = money;
         this.inventory = new ArrayList<>();
+        zone = new Zone(ZoneType.Village, 0,0 );
         initializeClassStats(playerClass);
     }
 
@@ -123,5 +126,25 @@ public class Player extends Entity {
         
         System.out.printf("%s grew to level %d!%n", name, level);
         System.out.printf("HP: +%d, ATK: +%d, DEF: +%d%n", hp, atk, def);
+    }
+
+    
+    public void move(int xPos, int yPos){
+        //moves the player;
+        this.xPos += xPos;
+        this.yPos += yPos;
+        
+        changeZone();
+    }
+
+    private void changeZone(){
+        if(Zone.getZoneFromPosition(this.xPos, this.yPos) == null){
+            zone = new Zone(ZoneType.Village, this.xPos, this.yPos);
+            System.out.println("Newly Created");
+        }else{
+            System.out.println("Used");
+            zone = Zone.getZoneFromPosition(this.xPos, this.yPos);
+        }
+        
     }
 }

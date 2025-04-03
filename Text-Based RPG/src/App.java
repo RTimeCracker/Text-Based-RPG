@@ -9,6 +9,12 @@ public class App {
         continuePrompt(sc);
 
         tutorialPrompt(sc);
+
+        Player player = Player.createPlayer(sc);
+        while (true) { 
+            explorePrompt(sc, player);
+        }
+        
         
 
     }
@@ -89,6 +95,14 @@ public class App {
             default -> {
             }
         }
+
+        onZoneEnter(sc, player);
+    }
+
+    static void onZoneEnter(Scanner sc, Player player){
+        System.out.println("You have entered Zone " + player.zone.zoneNumber);
+        int[] zonePosition = Zone.getZonePosition(player.zone);
+        System.out.println("Zone position " + "x: " + zonePosition[0] + " y: " + zonePosition[1]);
     }
 
 }
