@@ -4,21 +4,16 @@ enum EntityClass {
 
 public abstract class Entity {
     String name;
-    int[] stats = {
-        10, //HP
-        10, //ATK
-        10, //DEF
-    };
+    int hp;
+    int atk;
+    int def;
+    EntityClass entityClass;
 
-    public void Attack(){
-        //makes the entity damage it's enemy
-    }
-
-    public void Defend(){
-        //raises the entity's defense
-    }
-
-    public void TakeDamage(){
-        //reduces the damage of the entity based on the dmg taken
+    public Entity(String name, int hp, int atk, int def, EntityClass entityClass) {
+        this.name = name;
+        this.hp = hp;
+        this.atk = atk;
+        this.def = def;
+        this.entityClass = entityClass;
     }
 }

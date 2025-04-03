@@ -1,5 +1,5 @@
 enum ZoneType{
-    Wilds, Village, Dungeon
+    Encounter, Village, Dungeon
 }
 
 public class Zone {
