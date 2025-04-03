@@ -1,4 +1,4 @@
-class Potion extends Item {
+class Potion extends Item{
     private final int healingAmount;
 
     private Potion(String name, String description, int healingAmount) {
@@ -6,6 +6,7 @@ class Potion extends Item {
         this.healingAmount = healingAmount;
     }
 
+    @Override
     public void use() {
         System.out.println("Using a " + name + ", it heals " + healingAmount + " HP!");
     }
