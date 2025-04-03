@@ -53,7 +53,42 @@ public class App {
     }
 
     static void explorePrompt(Scanner sc, Player player){
-        System.out.println("Understandable, It would seem that thou art confident in your abilities.");
+        System.out.println("Where would you like to go?");
+        System.out.println("[1] North");
+        System.out.println("[2] East");
+        System.out.println("[3] South");
+        System.out.println("[4] West");
+
+        int directionChoice = sc.nextInt();
+
+        while(directionChoice != 1 && directionChoice != 2 && directionChoice != 3 && directionChoice != 4){
+            System.out.println("Invalid choice please choose again.");
+            System.out.println("[1] North");
+            System.out.println("[2] East");
+            System.out.println("[3] South");
+            System.out.println("[4] West");
+        }
+
+        switch (directionChoice) {
+            case 1 -> { 
+                //Move North
+                player.move(0, 1);
+            }
+            case 2 -> {
+                //Move East
+                player.move(1, 0);
+            }
+            case 3 -> {
+                //Move South
+                player.move(0, -1);
+            }
+            case 4 -> {
+                //Move West
+                player.move(-1, 0);
+            }
+            default -> {
+            }
+        }
     }
 
 }

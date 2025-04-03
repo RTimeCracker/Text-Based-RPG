@@ -14,9 +14,13 @@ public class Player extends Entity{
         this.inventory = inventory;
     }
 
-    public void Move(int xPos, int yPos){
+    public void move(int xPos, int yPos){
         //moves the player;
-        this.xPos = xPos;
-        this.yPos = yPos;
+        this.xPos += xPos;
+        this.yPos += yPos;
+    }
+
+    private void changeZone(){
+        zone = Zone.getZoneFromPosition(xPos, yPos);
     }
 }
