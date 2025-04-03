@@ -46,7 +46,49 @@ public class App {
     }
 
     static void playerInfoPrompt(Scanner sc){
-        System.out.println();
+        System.out.println("I know you're raring to go, but first we must know your name.");
+        String name = sc.next();
+        System.out.println("Great! So you're name is " + name);
+        continuePrompt(sc);
+    }
+
+    static void explorePrompt(Scanner sc, Player player){
+        System.out.println("Where would you like to go?");
+        System.out.println("[1] North");
+        System.out.println("[2] East");
+        System.out.println("[3] South");
+        System.out.println("[4] West");
+
+        int directionChoice = sc.nextInt();
+
+        while(directionChoice != 1 && directionChoice != 2 && directionChoice != 3 && directionChoice != 4){
+            System.out.println("Invalid choice please choose again.");
+            System.out.println("[1] North");
+            System.out.println("[2] East");
+            System.out.println("[3] South");
+            System.out.println("[4] West");
+        }
+
+        switch (directionChoice) {
+            case 1 -> { 
+                //Move North
+                player.move(0, 1);
+            }
+            case 2 -> {
+                //Move East
+                player.move(1, 0);
+            }
+            case 3 -> {
+                //Move South
+                player.move(0, -1);
+            }
+            case 4 -> {
+                //Move West
+                player.move(-1, 0);
+            }
+            default -> {
+            }
+        }
     }
 
 }
