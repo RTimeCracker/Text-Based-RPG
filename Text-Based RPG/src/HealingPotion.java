@@ -1,7 +1,7 @@
-class Potion extends Item{
+class HealingPotion extends Item{
     private final int healingAmount;
 
-    private Potion(String name, String description, int healingAmount) {
+    private HealingPotion(String name, String description, int healingAmount) {
         super(name, description);
         this.healingAmount = healingAmount;
     }
@@ -11,7 +11,7 @@ class Potion extends Item{
         System.out.println("Using a " + name + ", it heals " + healingAmount + " HP!");
     }
 
-    public static Potion normalPotion(){
-        return new Potion("Normal Potion", "Heals for a good amount.", 50);
+    public static HealingPotion normalPotion(){
+        return new HealingPotion("Normal Potion", "Heals for a good amount.", 50);
     }
 }
