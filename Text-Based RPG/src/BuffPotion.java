@@ -14,16 +14,20 @@ class BuffPotion extends Item{
         System.out.println("Using a " + name + ", it buff " + buffAmount + " BUFF!");
     }
 
-    public static BuffPotion buffPotion(){
-        return new BuffPotion("Protect Potion", "Casts Protect (Reduces physical damage).", 50 );
+    public static BuffPotion ProtectPotion(){
+        return new BuffPotion("Protect Potion", "Casts Protect (reduces physical damage).", 50 );
     }
 
-    public static BuffPotion buffPotion(){
-        return new BuffPotion("Shell Potion", ".", 150);
+    public static BuffPotion ShellPotion(){
+        return new BuffPotion("Shell Potion", "Casts Shell (reduces magic damage).", 50);
     }
 
-    public static HealingPotion maxPotion(){
-        return new HealingPotion("Max Potion", "Heals for a max amount.", 250);
+    public static BuffPotion PowerJuice(){
+        return new BuffPotion("Power Juice", "Casts Boost (increase attack).", 50);
+    }
+
+    public static BuffPotion MindJuice(){
+        return new BuffPotion("Mind Juice", "Casts Boost (increase magic power).", 50);
     }
 
 }
