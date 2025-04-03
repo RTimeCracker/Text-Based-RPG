@@ -46,7 +46,14 @@ public class App {
     }
 
     static void playerInfoPrompt(Scanner sc){
-        System.out.println();
+        System.out.println("I know you're raring to go, but first we must know your name.");
+        String name = sc.next();
+        System.out.println("Great! So you're name is " + name);
+        continuePrompt(sc);
+    }
+
+    static void explorePrompt(Scanner sc, Player player){
+        System.out.println("Understandable, It would seem that thou art confident in your abilities.");
     }
 
 }
