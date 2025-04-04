@@ -1,5 +1,5 @@
 enum EntityClass {
-    Warrior, Mage, Healer, Summoner
+    Warrior, Mage, Tank, Summoner
 }
 
 public abstract class Entity {

@@ -37,10 +37,10 @@ public class Player extends Entity {
                 this.atk = 20;
                 this.def = 5;
                 break;
-            case Healer:
-                this.hp = 100;
+            case Tank:
+                this.hp = 150;
                 this.atk = 8;
-                this.def = 12;
+                this.def = 20;
                 break;
             case Summoner:
                 this.hp = 90;
@@ -88,8 +88,8 @@ public class Player extends Entity {
                 return "Warrior: A strong melee fighter with high HP and balanced attack.";
             case Mage:
                 return "Mage: A powerful spellcaster with high damage but low defense.";
-            case Healer:
-                return "Healer: A supportive class with good survivability and healing abilities.";
+            case Tank:
+                return "Tank: C H U N K Y.";
             case Summoner:
                 return "Summoner: A versatile class that commands creatures to fight for them.";
             default:
@@ -115,10 +115,10 @@ public class Player extends Entity {
                 atkIncrease = 5;
                 defIncrease = 1;
                 break;
-            case Healer:
+            case Tank:
                 hpIncrease = 12;
                 atkIncrease = 1;
-                defIncrease = 2;
+                defIncrease = 7;
                 break;
             case Summoner:
                 hpIncrease = 10;
