@@ -11,7 +11,7 @@ class BuffPotion extends Item{
     public void use (Player player) {
         player.atk += buffAmount;
 
-        System.out.println("Using a " + name + ", it buff " + buffAmount + " BUFF!");
+        System.out.println("Using a " + name + ", it buffs " + buffAmount);
     }
 
     public static BuffPotion ProtectPotion(){
