@@ -1,25 +1,27 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Player extends Entity {
     private int level;
     private int exp;
     private int expToNextLevel;
-    private int money;
-    private List<Item> inventory;
+    public int money;
+    public List<Item> inventory;
     
     Zone zone;
     private int xPos = 0, yPos = 0;
+    private static Random random = new Random();
 
     public Player(String name, int money, EntityClass playerClass) {
-        super(name, 0, 0, 0, playerClass); // Initialize with 0 stats, will be set based on class
+        super(name, 0, 0, 0, playerClass);
         this.level = 1;
         this.exp = 0;
         this.expToNextLevel = 100;
         this.money = money;
         this.inventory = new ArrayList<>();
-        zone = new Zone(ZoneType.Village, 0,0 );
+        this.zone = new Zone(ZoneType.Village, 0, 0);
         initializeClassStats(playerClass);
     }
 
@@ -53,31 +55,31 @@ public class Player extends Entity {
     }
 
     public static Player createPlayer(Scanner scanner) {
-        System.out.println("Choose your class:");
+        App.displayClassSelection();
         for (int i = 0; i < EntityClass.values().length; i++) {
-            System.out.printf("[%d] %s%n", i + 1, EntityClass.values()[i]);
+            App.displayClassOption(i + 1, EntityClass.values()[i].toString());
         }
 
         int classChoice = 0;
         while (classChoice < 1 || classChoice > EntityClass.values().length) {
-            System.out.print("Enter your choice: ");
+            App.promptClassChoice();
             try {
                 classChoice = scanner.nextInt();
-                scanner.nextLine(); 
+                scanner.nextLine();
             } catch (Exception e) {
-                scanner.nextLine(); 
-                System.out.println("Invalid input! Please enter a number.");
+                scanner.nextLine();
+                App.displayInputError();
             }
         }
 
-        System.out.print("Enter your character's name: ");
+        App.promptPlayerName();
         String name = scanner.nextLine();
 
         EntityClass chosenClass = EntityClass.values()[classChoice - 1];
-        System.out.printf("You have chosen to be a %s!%n", chosenClass);
-        System.out.println(getClassDescription(chosenClass));
+        App.displayChosenClass(chosenClass.toString());
+        App.displayClassDescription(getClassDescription(chosenClass));
 
-        return new Player(name, 100, chosenClass); 
+        return new Player(name, 100, chosenClass);
     }
 
     private static String getClassDescription(EntityClass playerClass) {
@@ -100,51 +102,95 @@ public class Player extends Entity {
         exp -= expToNextLevel;
         expToNextLevel = (int)(expToNextLevel * 1.5);
         
-        // Class-specific stat growth
+        int hpIncrease = 0, atkIncrease = 0, defIncrease = 0;
+        
         switch (entityClass) {
             case Warrior:
-                hp += 15;
-                atk += 2;
-                def += 3;
+                hpIncrease = 15;
+                atkIncrease = 2;
+                defIncrease = 3;
                 break;
             case Mage:
-                hp += 8;
-                atk += 5;
-                def += 1;
+                hpIncrease = 8;
+                atkIncrease = 5;
+                defIncrease = 1;
                 break;
             case Healer:
-                hp += 12;
-                atk += 1;
-                def += 2;
+                hpIncrease = 12;
+                atkIncrease = 1;
+                defIncrease = 2;
                 break;
             case Summoner:
-                hp += 10;
-                atk += 3;
-                def += 2;
+                hpIncrease = 10;
+                atkIncrease = 3;
+                defIncrease = 2;
                 break;
         }
         
-        System.out.printf("%s grew to level %d!%n", name, level);
-        System.out.printf("HP: +%d, ATK: +%d, DEF: +%d%n", hp, atk, def);
+        hp += hpIncrease;
+        atk += atkIncrease;
+        def += defIncrease;
+        
+        App.displayLevelUp(name, level, hpIncrease, atkIncrease, defIncrease);
     }
 
-    
-    public void move(int xPos, int yPos){
-        //moves the player;
-        this.xPos += xPos;
-        this.yPos += yPos;
-        
+    public void move(int dx, int dy) {
+        this.xPos += dx;
+        this.yPos += dy;
         changeZone();
     }
 
-    private void changeZone(){
-        if(Zone.getZoneFromPosition(this.xPos, this.yPos) == null){
-            zone = new Zone(ZoneType.Village, this.xPos, this.yPos);
-            System.out.println("Newly Created");
-        }else{
-            System.out.println("Used");
-            zone = Zone.getZoneFromPosition(this.xPos, this.yPos);
-        }
+    private void changeZone() {
+        Zone existingZone = Zone.getZoneFromPosition(this.xPos, this.yPos);
         
+        if (existingZone == null) {
+            ZoneType[] zoneTypes = ZoneType.values();
+            ZoneType randomType = zoneTypes[random.nextInt(zoneTypes.length)];
+            
+            this.zone = new Zone(randomType, this.xPos, this.yPos);
+            App.displayNewZoneDiscovery(randomType.toString());
+        } else {
+            this.zone = existingZone;
+            App.displayReturningZone(this.zone.zoneType.toString());
+        }
+    }
+
+    public int getExp() {
+        return exp;
+    }
+
+    public int getExpToNextLevel() {
+        return expToNextLevel;
+    }
+
+    public void addExp(int amount) {
+        this.exp += amount;
+        App.displayExpGained(amount);
+        
+        if (this.exp >= this.expToNextLevel) {
+            levelUp();
+        }
+    }
+
+    public void useItem(Item item) {
+        item.use(this);
+        inventory.remove(item);
+    }
+
+    public void addItemToInventory(Item item) {
+        inventory.add(item);
+        App.displayItemAddedToInventory(item.name);
+    }
+
+    public void showInventory(Scanner sc) {
+        App.displayPlayerInventory(inventory);
+        if (inventory.isEmpty()) return;
+
+        App.promptItemSelection();
+        int choice = sc.nextInt();
+        
+        if (choice > 0 && choice <= inventory.size()) {
+            useItem(inventory.get(choice - 1));
+        }
     }
 }
