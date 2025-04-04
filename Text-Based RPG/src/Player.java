@@ -4,7 +4,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Player extends Entity {
-    private int level;
+    public int level;
     private int exp;
     private int expToNextLevel;
     public int money;
@@ -39,7 +39,7 @@ public class Player extends Entity {
                 break;
             case Tank:
                 this.hp = 150;
-                this.atk = 8;
+                this.atk = 8000;
                 this.def = 20;
                 break;
             case Summoner:

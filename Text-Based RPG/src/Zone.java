@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 enum ZoneType {
     Encounter, Village, Dungeon, Event
@@ -9,7 +10,10 @@ public class Zone {
     int zoneNumber;
     static List<Zone> zones = new ArrayList<>();
     private int xPos, yPos;
+    private static Random random = new Random();
+    private Set<Integer> usedChoices = new HashSet<>();
 
+    // Sample items for shops
     private static final List<Item> SHOP_ITEMS = List.of(
         HealingPotion.normalPotion(),
         HealingPotion.superPotion(),
@@ -39,34 +43,221 @@ public class Zone {
     }
 
     public void handleZoneEvent(Player player, Scanner sc) {
-    App.displayZoneType(zoneType);  //passing ZoneType enum directly
-    
-    switch (zoneType) {
-        case Village:
-            handleVillage(player, sc);
-            break;
-        case Dungeon:
-            Enemy boss = Enemy.generateBoss();
-            App.displayBossAppearance(boss.name);
-            boss.handleCombat(player, sc);
-            break;
-        case Encounter:
-            Enemy enemy = Enemy.generateRandom();
-            App.displayEnemyAppearance(enemy.name);
-            enemy.handleCombat(player, sc);
-            break;
+        App.displayZoneType(zoneType);
+        
+        switch (zoneType) {
+            case Village:
+                handleVillage(player, sc);
+                break;
+            case Dungeon:
+                Enemy boss = Enemy.generateBoss();
+                App.displayBossAppearance(boss.name);
+                boss.handleCombat(player, sc);
+                break;
+            case Encounter:
+                Enemy enemy = Enemy.generateRandom();
+                App.displayEnemyAppearance(enemy.name);
+                enemy.handleCombat(player, sc);
+                break;
+            case Event:
+                handleEvent(player, sc);
+                break;
+        }
     }
-}
+
+    private void handleEvent(Player player, Scanner sc) {
+        usedChoices.clear();
+        int eventType = random.nextInt(3);
+        
+        switch (eventType) {
+            case 0:
+                mysteriousShackEvent(player, sc);
+                break;
+            case 1:
+                woundedTravelerEvent(player, sc);
+                break;
+            case 2:
+                ancientTreasureEvent(player, sc);
+                break;
+        }
+    }
+
+    private void mysteriousShackEvent(Player player, Scanner sc) {
+        AtomicBoolean staying = new AtomicBoolean(true); 
+
+        App.displayEventDescription(
+                "Mysterious Shack\n\n" +
+                "A creaky wooden structure stands before you.\n" +
+                "Faint candlelight flickers through the broken windows."
+            );
+
+        while (staying.get()) {
+            List<String> options = new ArrayList<>();
+            List<Runnable> actions = new ArrayList<>();
+            
+            if (!usedChoices.contains(1)) {
+                options.add("[1] Enter the shack");
+                actions.add(() -> {
+                    if (random.nextBoolean()) {
+                        Enemy enemy = Enemy.generateRandom();
+                        App.displayEventOutcome("A " + enemy.name + " ambushes you!");
+                        enemy.handleCombat(player, sc);
+                    } else {
+                        Item item = HealingPotion.normalPotion();
+                        player.addItemToInventory(item);
+                        App.displayEventOutcome("You found: " + item.name);
+                    }
+                    usedChoices.add(1);
+                });
+            }
+            
+            if (!usedChoices.contains(2)) {
+                options.add("[2] Search the perimeter");
+                actions.add(() -> {
+                    Item item = AilmentPotion.Antidote();
+                    player.addItemToInventory(item);
+                    App.displayEventOutcome("Discovered hidden " + item.name);
+                    usedChoices.add(2);
+                });
+            }
+            
+            options.add("[3] Leave this place");
+            actions.add(() -> {
+                App.displayEventOutcome("You depart from the eerie shack.");
+                staying.set(false);;
+            });
+            
+            App.displayEventChoices(options.toArray(new String[options.size()]));
+            int choice = getValidChoice(sc, options.size());
+            actions.get(choice - 1).run();
+        }
+    }
+
+    private void woundedTravelerEvent(Player player, Scanner sc) {
+        AtomicBoolean staying = new AtomicBoolean(true);
+
+        App.displayEventDescription(
+                "Wounded Traveler\n\n" +
+                "A bloodied adventurer leans against a tree,\n" +
+                "clutching their side and gasping for help."
+            );
+        
+        while (staying.get()) {
+            List<String> options = new ArrayList<>();
+            List<Runnable> actions = new ArrayList<>();
+            
+            if (!usedChoices.contains(1)) {
+                options.add("[1] Offer medical aid");
+                actions.add(() -> {
+                    player.hp -= 15;
+                    Item item = HealingPotion.superPotion();
+                    player.addItemToInventory(item);
+                    App.displayEventOutcome(
+                        "You sacrifice 15 HP to help them.\n" +
+                        "They reward you with " + item.name
+                    );
+                    usedChoices.add(1);
+                });
+            }
+            
+            if (!usedChoices.contains(2)) {
+                options.add("[2] Rob the traveler");
+                actions.add(() -> {
+                    player.money += 75;
+                    App.displayEventOutcome(
+                        "You steal 75 gold!\n" +
+                        "Suddenly, guards appear!"
+                    );
+                    Enemy enemy = new Enemy(List.of(), "Town Guard", 120, 35, 15, EntityClass.Warrior);
+                    enemy.handleCombat(player, sc);
+                    usedChoices.add(2);
+                });
+            }
+            
+            options.add("[3] Continue your journey");
+            actions.add(() -> {
+                App.displayEventOutcome("You ignore their pleas and move on.");
+                staying.set(false);
+            });
+            
+            App.displayEventChoices(options.toArray(new String[options.size()]));
+            int choice = getValidChoice(sc, options.size());
+            actions.get(choice - 1).run();
+        }
+    }
+
+    private void ancientTreasureEvent(Player player, Scanner sc) {
+        AtomicBoolean staying = new AtomicBoolean(true); 
+
+        App.displayEventDescription(
+                "Ancient Treasure Chest\n\n" +
+                "An ornate chest covered in strange markings\n" +
+                "lies half-buried in the dirt."
+            );
+        
+        while (staying.get()) {
+            List<String> options = new ArrayList<>();
+            List<Runnable> actions = new ArrayList<>();
+            
+            if (!usedChoices.contains(1)) {
+                options.add("[1] Pick the lock carefully");
+                actions.add(() -> {
+                    if (random.nextInt(100) < player.level * 10) {
+                        Item item = BuffPotion.PowerJuice();
+                        player.addItemToInventory(item);
+                        App.displayEventOutcome("Success! Found: " + item.name);
+                    } else {
+                        App.displayEventOutcome("The lock resists your attempts.");
+                    }
+                    usedChoices.add(1);
+                });
+            }
+            
+            if (!usedChoices.contains(2)) {
+                options.add("[2] Force it open");
+                actions.add(() -> {
+                    if (random.nextBoolean()) {
+                        Item item = HealingPotion.maxPotion();
+                        player.addItemToInventory(item);
+                        App.displayEventOutcome("The chest breaks open! Found: " + item.name);
+                    } else {
+                        player.hp -= 40;
+                        App.displayEventOutcome("A trap explodes! (-40 HP)");
+                    }
+                    usedChoices.add(2);
+                });
+            }
+            
+            options.add("[3] Walk away");
+            actions.add(() -> {
+                App.displayEventOutcome("You leave the mysterious chest behind.");
+                staying.set(false);
+            });
+            
+            App.displayEventChoices(options.toArray(new String[options.size()]));
+            int choice = getValidChoice(sc, options.size());
+            actions.get(choice - 1).run();
+        }
+    }
+
+    private int getValidChoice(Scanner sc, int maxChoice) {
+        while (true) {
+            try {
+                int choice = sc.nextInt();
+                if (choice >= 1 && choice <= maxChoice) {
+                    return choice;
+                }
+                App.displayError();
+            } catch (InputMismatchException e) {
+                sc.next();
+                App.displayError();
+            }
+        }
+    }
 
     private void handleVillage(Player player, Scanner sc) {
         App.displayVillageOptions();
-        int choice = sc.nextInt();
-        
-        while (choice < 1 || choice > 3) {
-            App.displayError();
-            App.displayVillageOptions();
-            choice = sc.nextInt();
-        }
+        int choice = getValidChoice(sc, 3);
         
         if (choice == 1) {
             buyItems(player, sc);
@@ -78,14 +269,9 @@ public class Zone {
     private void buyItems(Player player, Scanner sc) {
         App.displayShopItems(SHOP_ITEMS);
         
-        int choice = sc.nextInt();
-        while (choice < 0 || choice > SHOP_ITEMS.size()) {
-            App.displayError();
-            App.displayShopItems(SHOP_ITEMS);
-            choice = sc.nextInt();
-        }
+        int choice = getValidChoice(sc, SHOP_ITEMS.size() + 1);
         
-        if (choice > 0) {
+        if (choice > 0 && choice <= SHOP_ITEMS.size()) {
             Item selected = SHOP_ITEMS.get(choice - 1);
             if (player.money >= 100) {
                 player.money -= 100;
@@ -104,16 +290,9 @@ public class Zone {
         }
         
         App.displayPlayerInventoryForSelling(player.inventory);
-        App.promptSellChoice();
+        int choice = getValidChoice(sc, player.inventory.size() + 1);
         
-        int choice = sc.nextInt();
-        while (choice < 0 || choice > player.inventory.size()) {
-            App.displayError();
-            App.displayPlayerInventoryForSelling(player.inventory);
-            choice = sc.nextInt();
-        }
-        
-        if (choice > 0) {
+        if (choice > 0 && choice <= player.inventory.size()) {
             Item sold = player.inventory.remove(choice - 1);
             player.money += 50;
             App.displayItemSold(sold.name);
