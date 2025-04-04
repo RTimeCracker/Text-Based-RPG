@@ -56,6 +56,24 @@ public class App {
         System.out.println("\nYou have entered a " + zoneType + " zone!");
     }
 
+
+    public static void displayEventDescription(String description) {
+        System.out.println("\n" + description);
+    }
+
+    public static void displayEventChoices(String... choices) {
+        System.out.println("\nWhat will you do?");
+        for (String choice : choices) {
+            System.out.println(choice);
+        }
+        System.out.print("Enter your choice: ");
+    }
+
+    public static void displayEventOutcome(String outcome) {
+        System.out.println("\n" + outcome);
+        continuePrompt();
+    }
+
     public static void displayVillageOptions() {
         System.out.println("Welcome to the village! What would you like to do?");
         System.out.println("[1] Buy items");
