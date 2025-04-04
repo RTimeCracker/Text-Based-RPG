@@ -3,7 +3,6 @@ enum ZoneType{
     Encounter, Village, Dungeon
 }
 
-
 public class Zone {
     ZoneType zoneType;
     int zoneNumber;
