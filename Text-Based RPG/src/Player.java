@@ -186,8 +186,7 @@ public class Player extends Entity {
         App.displayPlayerInventory(inventory);
         if (inventory.isEmpty()) return;
 
-        App.promptItemSelection();
-        int choice = sc.nextInt();
+        int choice = App.getIntInput("\nSelect an item to use (0 to cancel): ", 0, inventory.size());
         
         if (choice > 0 && choice <= inventory.size()) {
             useItem(inventory.get(choice - 1));

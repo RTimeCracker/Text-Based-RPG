@@ -9,9 +9,10 @@ public class Zone {
     ZoneType zoneType;
     int zoneNumber;
     static List<Zone> zones = new ArrayList<>();
-    private int xPos, yPos;
+    public int xPos, yPos;
     private static Random random = new Random();
     private Set<Integer> usedChoices = new HashSet<>();
+    private Enemy lastEncounteredEnemy = null;
 
     // Sample items for shops
     private static final List<Item> SHOP_ITEMS = List.of(
@@ -43,7 +44,7 @@ public class Zone {
     }
 
     public void handleZoneEvent(Player player, Scanner sc) {
-        App.displayZoneType(zoneType);
+        App.displayZoneContents(this);
         
         switch (zoneType) {
             case Village:
@@ -55,13 +56,33 @@ public class Zone {
                 boss.handleCombat(player, sc);
                 break;
             case Encounter:
-                Enemy enemy = Enemy.generateRandom();
-                App.displayEnemyAppearance(enemy.name);
-                enemy.handleCombat(player, sc);
+                handleEncounter(player, sc);
                 break;
             case Event:
                 handleEvent(player, sc);
                 break;
+        }
+    }
+
+    private void handleEncounter(Player player, Scanner sc) {
+        // 70% chance to encounter new enemy if none encountered before
+        // 30% chance to encounter new enemy if previous one was defeated
+        if (lastEncounteredEnemy == null || 
+           (player.hp > 0 && random.nextDouble() < 0.3)) {
+            
+            Enemy enemy = Enemy.generateRandom();
+            lastEncounteredEnemy = enemy;
+            App.displayEnemyAppearance(enemy.name);
+            enemy.handleCombat(player, sc);
+        } else {
+            if (lastEncounteredEnemy != null && lastEncounteredEnemy.hp <= 0) {
+                App.displayEventDescription("The remains of " + lastEncounteredEnemy.name + 
+                                          " litter the ground.");
+                App.displayEventOutcome("No living enemies remain in this area.");
+            } else {
+                App.displayEventDescription("The area appears quiet and peaceful.");
+                App.displayEventOutcome("You find nothing of interest here.");
+            }
         }
     }
 
@@ -83,14 +104,13 @@ public class Zone {
     }
 
     private void mysteriousShackEvent(Player player, Scanner sc) {
-        AtomicBoolean staying = new AtomicBoolean(true); 
-
+        AtomicBoolean staying = new AtomicBoolean(true);
         App.displayEventDescription(
-                "Mysterious Shack\n\n" +
-                "A creaky wooden structure stands before you.\n" +
-                "Faint candlelight flickers through the broken windows."
-            );
-
+            "Mysterious Shack\n\n" +
+            "A creaky wooden structure stands before you.\n" +
+            "Faint candlelight flickers through the broken windows."
+        );
+        
         while (staying.get()) {
             List<String> options = new ArrayList<>();
             List<Runnable> actions = new ArrayList<>();
@@ -124,10 +144,10 @@ public class Zone {
             options.add("[3] Leave this place");
             actions.add(() -> {
                 App.displayEventOutcome("You depart from the eerie shack.");
-                staying.set(false);;
+                staying.set(false);
             });
             
-            App.displayEventChoices(options.toArray(new String[options.size()]));
+            App.displayEventChoices(options.toArray(new String[0]));
             int choice = getValidChoice(sc, options.size());
             actions.get(choice - 1).run();
         }
@@ -135,12 +155,11 @@ public class Zone {
 
     private void woundedTravelerEvent(Player player, Scanner sc) {
         AtomicBoolean staying = new AtomicBoolean(true);
-
         App.displayEventDescription(
-                "Wounded Traveler\n\n" +
-                "A bloodied adventurer leans against a tree,\n" +
-                "clutching their side and gasping for help."
-            );
+            "Wounded Traveler\n\n" +
+            "A bloodied adventurer leans against a tree,\n" +
+            "clutching their side and gasping for help."
+        );
         
         while (staying.get()) {
             List<String> options = new ArrayList<>();
@@ -180,20 +199,19 @@ public class Zone {
                 staying.set(false);
             });
             
-            App.displayEventChoices(options.toArray(new String[options.size()]));
+            App.displayEventChoices(options.toArray(new String[0]));
             int choice = getValidChoice(sc, options.size());
             actions.get(choice - 1).run();
         }
     }
 
     private void ancientTreasureEvent(Player player, Scanner sc) {
-        AtomicBoolean staying = new AtomicBoolean(true); 
-
+        AtomicBoolean staying = new AtomicBoolean(true);
         App.displayEventDescription(
-                "Ancient Treasure Chest\n\n" +
-                "An ornate chest covered in strange markings\n" +
-                "lies half-buried in the dirt."
-            );
+            "Ancient Treasure Chest\n\n" +
+            "An ornate chest covered in strange markings\n" +
+            "lies half-buried in the dirt."
+        );
         
         while (staying.get()) {
             List<String> options = new ArrayList<>();
@@ -234,7 +252,7 @@ public class Zone {
                 staying.set(false);
             });
             
-            App.displayEventChoices(options.toArray(new String[options.size()]));
+            App.displayEventChoices(options.toArray(new String[0]));
             int choice = getValidChoice(sc, options.size());
             actions.get(choice - 1).run();
         }

@@ -32,6 +32,7 @@ public class Enemy extends Entity {
     }
 
     public void handleCombat(Player player, Scanner sc) {
+        System.out.println();
         App.displayCombatStart();
         
         while (player.hp > 0 && this.hp > 0) {
