@@ -7,6 +7,10 @@ public class Item {
         this.description = description;
     }
 
+    public class Potion{
+
+    }
+
     public void use(Player player) { 
     }
 }
