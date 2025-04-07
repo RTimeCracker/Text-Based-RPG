@@ -21,6 +21,10 @@ public class Item {
 
     }
 
+    public class Potion{
+
+    }
+
     public void use(Player player) { 
         player.hp += healingAmount;
         player.mp += manaAmount;
