@@ -15,7 +15,7 @@ public class Player extends Entity {
     private static Random random = new Random();
 
     public Player(String name, int money, EntityClass playerClass) {
-        super(name, 0, 0, 0, playerClass);
+        super(name , 0, 0, 0, 0, playerClass);
         this.level = 1;
         this.exp = 0;
         this.expToNextLevel = 100;
@@ -102,7 +102,7 @@ public class Player extends Entity {
         exp -= expToNextLevel;
         expToNextLevel = (int)(expToNextLevel * 1.5);
         
-        int hpIncrease = 0, atkIncrease = 0, defIncrease = 0;
+        int hpIncrease = 0, atkIncrease = 0, defIncrease = 0; 
         
         switch (entityClass) {
             case Warrior:

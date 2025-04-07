@@ -1,4 +1,4 @@
-class BuffPotion extends Item{
+/*class BuffPotion extends Item{
     private final int buffAmount;
 
 
@@ -31,3 +31,4 @@ class BuffPotion extends Item{
     }
 
 }
+    */

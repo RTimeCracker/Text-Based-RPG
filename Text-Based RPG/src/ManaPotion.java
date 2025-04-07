@@ -1,4 +1,4 @@
-class ManaPotion extends Item{
+/*class ManaPotion extends Item{
     private final int ManaAmount;
 
     private ManaPotion(String name, String description, int ManaAmount) {
@@ -8,9 +8,9 @@ class ManaPotion extends Item{
 
     
     public void use (Player player) {
-        player.hp += ManaAmount;
+        player.mp += ManaAmount;
 
-        System.out.println("Using a " + name + ", it restores HP and MP " + ManaAmount + " HP & MP!");
+        System.out.println("Using a " + name + ", it restores MP " + ManaAmount + " MP!");
     }
 
     public static ManaPotion LowlyFlaskofTears(){
@@ -25,3 +25,4 @@ class ManaPotion extends Item{
         return new ManaPotion("Absolute Flask of God Tears", "Restores 150 MP.", 200);
     }
 }
+*/

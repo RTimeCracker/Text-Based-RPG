@@ -1,4 +1,4 @@
-class HybridPotion extends Item{
+/*class HybridPotion extends Item{
     private final int hybridAmount;
 
     private HybridPotion(String name, String description, int hybridAmount) {
@@ -9,6 +9,7 @@ class HybridPotion extends Item{
     
     public void use (Player player) {
         player.hp += hybridAmount;
+        player.mp += hybridAmount;
 
         System.out.println("Using a " + name + ", it restores HP and MP " + hybridAmount + " HP & MP!");
     }
@@ -25,3 +26,4 @@ class HybridPotion extends Item{
         return new HybridPotion("High Elixir Potion", "Restores for a max amount of HP and MP.", 200);
     }
 }
+*/

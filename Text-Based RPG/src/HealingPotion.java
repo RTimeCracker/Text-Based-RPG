@@ -1,4 +1,4 @@
-class HealingPotion extends Item{
+/*class HealingPotion extends Item{
     private final int healingAmount;
 
     private HealingPotion(String name, String description, int healingAmount) {
@@ -27,5 +27,6 @@ class HealingPotion extends Item{
 
     public static HealingPotion PhoenixDownPotion(){
         return new HealingPotion("Phoenix Down Potion", "Revives a KO'd unit with 10 HP.", 10);
-    }
+    } 
 }
+*/
