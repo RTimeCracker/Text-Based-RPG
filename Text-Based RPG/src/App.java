@@ -1,15 +1,158 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.List;
 import java.util.Scanner;
+import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
+class UserInterface{
+
+    static class BackgroundPanel extends JPanel {
+        private Image background;
+     
+        public BackgroundPanel(Image background)
+        {
+            this.background = background;
+            setLayout( new BorderLayout() );
+        }
+     
+        @Override
+        protected void paintComponent(Graphics g)
+        {
+            super.paintComponent(g);
+     
+            g.drawImage(background, 0, 0, null); // image full size
+            //g.drawImage(background, 0, 0, getWidth(), getHeight(), null); // image scaled
+        }
+     
+        @Override
+        public Dimension getPreferredSize()
+        {
+            return new Dimension(background.getWidth(this), background.getHeight(this));
+        }
+    
+    }
+
+    static class IntroductionClickablePanel extends JPanel implements MouseListener{
+
+        int count = 1;
+        JLabel label;
+        String[] texts;
+        boolean isContinuable;
+    
+        public IntroductionClickablePanel() {
+            addMouseListener(this);
+        }
+        
+        public void insertDialogues(JLabel label, String[] texts, boolean isContinuable){
+            this.isContinuable = isContinuable;
+            this.label = label;
+            this.texts = texts;
+        }
+    
+        @Override
+        public void mouseClicked(MouseEvent e) {
+        }
+    
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if(!isContinuable) return;
+    
+            if(count < texts.length){
+                label.setText("<html>" + texts[count] + "<html>");
+
+                if("choice".equals(texts[count])){
+                    label.setText("Please choose your class.");
+                    isContinuable = false;
+
+                    JPanel classesPanel = new JPanel();
+                    classesPanel.setLayout(new FlowLayout(FlowLayout.CENTER,20,0));
+                    
+                    classesPanel.setBounds(200, 350, 400, 100);
+                    classesPanel.setOpaque(false);
+                    classesPanel.setBackground(new Color(0,0,0,0));
+
+                    JButton warriorButton = new JButton("Warrior");
+                    JButton mageButton = new JButton("Mage");
+                    JButton tankButton = new JButton("Tank");
+                    JButton summonerButton = new JButton("Summoner");
+
+                    classesPanel.add(warriorButton);
+                    classesPanel.add(mageButton);
+                    classesPanel.add(tankButton);
+                    classesPanel.add(summonerButton);
+                    this.repaint();
+
+                    this.add(classesPanel);
+                }
+                count++;
+            }
+            
+        }
+    
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            
+        }
+    
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            
+        }
+    
+        @Override
+        public void mouseExited(MouseEvent e) {
+            
+        }
+    }
+}
 
 public class App {
+    private enum GameState{
+        MainMenu, Game
+    }
+
+    static final int SCREENWIDTH = 800;
+    static final int SCREENHEIGHT = 700;
+
+    private static File menuMusicFile;
+    private static Clip menuClip;
+    private static GameState currentGameState = GameState.MainMenu;
+
+    private static CardLayout cardLayout;
+    private static JPanel mainPanel;
+    private static UserInterface userInterface;
+
+    private static String[] introductionDialogues = {"Welcome Vaiken: Last Legacy", "A game where you can explore, fight enemies, and gather loot!", "choice"};
+  
     private static Scanner sc = new Scanner(System.in);   
     private static Player player;
     private static Zone startingZone;
 
-    public static void main(String[] args) {
-        displayWelcome();
-        continuePrompt();
-        tutorialPrompt();
+    public static void main(String[] args) throws LineUnavailableException, IOException {
+        menuMusicFile = new File("Text-Based RPG\\Music\\RPGMENUBGM.wav");
+        menuClip = AudioSystem.getClip();
+        menuClip.loop(Clip.LOOP_CONTINUOUSLY);
+        PlayMusic(menuMusicFile, menuClip);
+
+        UserInterface userInterface = new UserInterface();
+
+        JFrame frame = new JFrame("Vaiken: Last Legacy");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
+        
+
+        initMainMenu(frame, mainPanel, cardLayout);
+        initIntroductionInterface(frame, mainPanel, cardLayout);
+
+        updateGameState(currentGameState);
         
         startingZone = new Zone(ZoneType.Village, 0, 0);
         player = Player.createPlayer(sc);
@@ -287,6 +430,163 @@ public class App {
         player.zone.handleZoneEvent(player, sc);
     }
 
+
+    // ================= USER INTERFACE METHODS =========
+    public static void updateGameState(GameState gameState){
+        currentGameState = gameState;
+
+        if(currentGameState == GameState.MainMenu){
+            System.out.println("Menu");
+        }else if(currentGameState == GameState.Game){
+            cardLayout.show(mainPanel, "GamePanel");
+            StopMusic(menuMusicFile, menuClip);
+        }
+    }
+
+
+    private static void initIntroductionInterface(JFrame frame, JPanel mainPanel, CardLayout cardLayout){
+        UserInterface.IntroductionClickablePanel introductionPanel = new UserInterface.IntroductionClickablePanel();
+        introductionPanel.setBackground(Color.BLACK);
+        introductionPanel.setLayout(null);
+        introductionPanel.setSize(new Dimension(800, 700));
+
+        JLabel introductionLabel = new JLabel("<html>" + introductionDialogues[0] + "<html>");
+        Font font = new Font("SansSerif",Font.PLAIN,32);
+        introductionPanel.insertDialogues(introductionLabel,introductionDialogues,true);
+        introductionLabel.setForeground(Color.white);
+        introductionLabel.setBounds(new Rectangle(200,100, 400,400));
+        introductionLabel.setFont(font);
+        introductionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        introductionLabel.setVerticalAlignment(SwingConstants.TOP);
+
+        //Add panels to both frame and cardLayout
+        frame.add(introductionPanel);
+        mainPanel.add(introductionPanel, "GamePanel");
+        introductionPanel.add(introductionLabel);
+
+        
+
+    }
+
+
+    private static void initMainMenu(JFrame frame, JPanel mainPanel, CardLayout cardLayout) throws IOException{
+        JPanel mainMenuPanel = new JPanel();
+        mainMenuPanel.setPreferredSize(new Dimension(SCREENWIDTH,SCREENHEIGHT));
+
+        BufferedImage menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\MenuBackground.png"));
+        Image scaledImage = menuBackgroundImage.getScaledInstance(SCREENWIDTH, SCREENHEIGHT, Image.SCALE_SMOOTH);
+        UserInterface.BackgroundPanel backgroundPanel = new UserInterface.BackgroundPanel(scaledImage);
+        mainMenuPanel.setLayout(new BorderLayout());
+        mainMenuPanel.setOpaque(false);
+
+        backgroundPanel.setMaximumSize(new Dimension(SCREENWIDTH,SCREENHEIGHT));
+        backgroundPanel.setPreferredSize(new Dimension(SCREENWIDTH,SCREENHEIGHT));
+        frame.add(backgroundPanel);
+        backgroundPanel.add(mainMenuPanel);
+
+        JLabel titleLabel = new JLabel("<html>Vaiken: <br/>----Last Legacy----</html>");
+        titleLabel.setFont(new Font("Roboto",Font.BOLD,60));
+        titleLabel.setForeground(Color.BLACK);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setBorder(new EmptyBorder(100,0,0,0));
+        
+        mainMenuPanel.add(titleLabel, BorderLayout.NORTH);
+
+        JPanel buttonsListPanel = new JPanel();
+        buttonsListPanel.setPreferredSize(new Dimension(0,350));
+        buttonsListPanel.setLayout(new BoxLayout(buttonsListPanel, BoxLayout.PAGE_AXIS));
+        buttonsListPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        buttonsListPanel.setOpaque(false);
+        buttonsListPanel.setBackground(new Color(0,0,0,0));
+        
+        JButton playButton = new JButton("Play");
+        JButton creditsButton = new JButton("Credits");
+        JButton exitButton = new JButton("Exit");
+
+        playButton.setFont(new Font("Serif",Font.BOLD,32));
+        playButton.setFocusPainted(false);
+
+        creditsButton.setFont(new Font("Serif",Font.BOLD,32));
+        creditsButton.setFocusPainted(false);
+
+        exitButton.setFont(new Font("Serif",Font.BOLD,32));
+        exitButton.setFocusPainted(false);
+
+
+        playButton.setMaximumSize(new Dimension(100, 50));
+        playButton.setPreferredSize(new Dimension(100, 50));
+
+        creditsButton.setMaximumSize(new Dimension(150, 50));
+        creditsButton.setPreferredSize(new Dimension(150, 50));
+
+        exitButton.setMaximumSize(new Dimension(100, 50));
+        exitButton.setPreferredSize(new Dimension(100, 50));
+
+        playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        creditsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        buttonsListPanel.add(playButton);
+        buttonsListPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        buttonsListPanel.add(creditsButton);
+        buttonsListPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        buttonsListPanel.add(exitButton);
+
+        mainMenuPanel.add(buttonsListPanel, BorderLayout.PAGE_END);
+
+        //Credits panel
+        JPanel creditsPanel = new JPanel();
+        creditsPanel.setLayout(new BoxLayout(creditsPanel, BoxLayout.PAGE_AXIS));
+        JLabel name1 = new JLabel("Lead Director: Lanz Utitco");
+        JLabel name2 = new JLabel("Manager/Assistant Programmer: Kenneth Sabangan");
+        JLabel name3 = new JLabel("Item Director: Ryan Llano");
+        JLabel name4 = new JLabel("Art Director: John Louie Sion");
+        JLabel name5 = new JLabel("Music Director: Leonard Orit");
+        JLabel name6 = new JLabel("Database Master: Khervin Yagdulas");
+        JButton closeCreditsButton = new JButton("Close");
+
+        name1.setBorder(new EmptyBorder(50,0,0,0));
+        name1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        name2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        name3.setAlignmentX(Component.CENTER_ALIGNMENT);
+        name4.setAlignmentX(Component.CENTER_ALIGNMENT);
+        name5.setAlignmentX(Component.CENTER_ALIGNMENT);
+        name6.setAlignmentX(Component.CENTER_ALIGNMENT);
+        closeCreditsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        creditsPanel.add(name1);
+        creditsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        creditsPanel.add(name2);
+        creditsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        creditsPanel.add(name3);
+        creditsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        creditsPanel.add(name4);
+        creditsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        creditsPanel.add(name5);
+        creditsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        creditsPanel.add(name6);
+        creditsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        creditsPanel.add(closeCreditsButton);
+        
+
+        mainPanel.add(backgroundPanel, "MainMenuPanel");
+        mainPanel.add(creditsPanel,"Credits");
+        
+        playButton.addActionListener(e -> {updateGameState(GameState.Game);});
+        creditsButton.addActionListener(e -> cardLayout.show(mainPanel, "Credits"));
+        closeCreditsButton.addActionListener(e -> cardLayout.show(mainPanel, "MainMenuPanel"));
+        exitButton.addActionListener(e -> System.exit(0));
+
+        frame.add(mainPanel);
+        frame.pack();
+
+        frame.setLocationRelativeTo(null); //Sets the position of the frame to be at the center of the screen
+        frame.setVisible(true);
+    }
+
+
+
     // ================= HELPER METHODS =================
     
     public static int getIntInput(String prompt, int min, int max) {
@@ -305,4 +605,40 @@ public class App {
             }
         }
     }
+
+
+    // ================ Music Methods =====================
+    public static void PlayMusic(File musicPath, Clip clip){
+        try {
+
+            if(musicPath.exists()){
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+
+                clip.open(audioInput);
+                clip.start();
+            }else{
+                System.out.println("Can't find file.");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public static void StopMusic(File musicPath, Clip clip){
+        try {
+            
+            if(musicPath.exists()){
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+                
+                if(clip.isOpen()){
+                    clip.stop();
+                }
+            }else{
+                System.out.println("Can't find file.");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
 }
