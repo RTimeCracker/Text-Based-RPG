@@ -6,9 +6,10 @@ public class Enemy extends Entity {
 
     // Boss enemies
     private static final List<Enemy> BOSSES = List.of(
-        new Enemy(List.of(HealingPotion.maxPotion()), "Dragon", 500, 100, 50, EntityClass.Warrior),
+        new Enemy(List.of(HealingPotion.maxPotion()), "Dragon", 500, 100, 50,  EntityClass.Warrior),
         new Enemy(List.of(BuffPotion.MindJuice()), "Dark Mage", 300, 150, 30, EntityClass.Mage),
-        new Enemy(List.of(AilmentPotion.Remedy()), "Demon King", 800, 120, 80, EntityClass.Warrior)
+        new Enemy(List.of(AilmentPotion.Remedy()), "Demon King", 800, 120, 80, EntityClass.Warrior),
+        new Enemy(List.of(HealingPotion.maxPotion()), "Sung Jin Who?", 700, 200, 70, EntityClass.Summoner)
     );
     
     // Regular enemies

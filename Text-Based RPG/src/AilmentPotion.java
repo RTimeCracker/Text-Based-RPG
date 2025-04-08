@@ -1,4 +1,4 @@
-class AilmentPotion extends Item{
+/*class AilmentPotion extends Item{
     private final int AilmentAmount;
 
 
@@ -35,3 +35,4 @@ class AilmentPotion extends Item{
     }
 
 }
+    */

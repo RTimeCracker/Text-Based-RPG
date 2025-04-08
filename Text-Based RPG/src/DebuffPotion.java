@@ -1,4 +1,4 @@
-class DebuffPotion extends Item{
+/*class DebuffPotion extends Item{
     private final int debuffAmount;
 
 
@@ -41,3 +41,4 @@ class DebuffPotion extends Item{
         return new DebuffPotion("Charm Dust", "Inflicts Charm (makes the unit fight for the enemy).", 50);
     }
 }
+*/

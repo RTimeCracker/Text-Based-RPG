@@ -187,7 +187,7 @@ public class Zone {
                         "You steal 75 gold!\n" +
                         "Suddenly, guards appear!"
                     );
-                    Enemy enemy = new Enemy(List.of(), "Town Guard", 120, 35, 15, EntityClass.Warrior);
+                    Enemy enemy = new Enemy(List.of(), "Town Guard Ryan", 120, 35, 15, EntityClass.Warrior);
                     enemy.handleCombat(player, sc);
                     usedChoices.add(2);
                 });
