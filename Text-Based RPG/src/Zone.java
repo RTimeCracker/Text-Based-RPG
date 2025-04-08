@@ -16,10 +16,10 @@ public class Zone {
 
     // Sample items for shops
     private static final List<Item> SHOP_ITEMS = List.of(
-        HealingPotion.normalPotion(),
-        HealingPotion.superPotion(),
-        BuffPotion.PowerJuice(),
-        AilmentPotion.Antidote()
+        //HealingPotion.normalPotion(),
+        //HealingPotion.superPotion(),
+        //BuffPotion.PowerJuice(),
+        //AilmentPotion.Antidote()
     );
 
     public Zone(ZoneType zoneType, int xPos, int yPos) {
@@ -123,9 +123,9 @@ public class Zone {
                         App.displayEventOutcome("A " + enemy.name + " ambushes you!");
                         enemy.handleCombat(player, sc);
                     } else {
-                        Item item = HealingPotion.normalPotion();
-                        player.addItemToInventory(item);
-                        App.displayEventOutcome("You found: " + item.name);
+                        //Item item = HealingPotion.normalPotion();
+                        //player.addItemToInventory(item);
+                        //App.displayEventOutcome("You found: " + item.name);
                     }
                     usedChoices.add(1);
                 });
@@ -134,9 +134,9 @@ public class Zone {
             if (!usedChoices.contains(2)) {
                 options.add("[2] Search the perimeter");
                 actions.add(() -> {
-                    Item item = AilmentPotion.Antidote();
-                    player.addItemToInventory(item);
-                    App.displayEventOutcome("Discovered hidden " + item.name);
+                    //Item item = AilmentPotion.Antidote();
+                    //player.addItemToInventory(item);
+                    //App.displayEventOutcome("Discovered hidden " + item.name);
                     usedChoices.add(2);
                 });
             }
@@ -167,16 +167,16 @@ public class Zone {
             
             if (!usedChoices.contains(1)) {
                 options.add("[1] Offer medical aid");
-                actions.add(() -> {
+               /*  actions.add(() -> {
                     player.hp -= 15;
-                    Item item = HealingPotion.superPotion();
-                    player.addItemToInventory(item);
+                    //Item item = HealingPotion.superPotion();
+                    //player.addItemToInventory(item);
                     App.displayEventOutcome(
                         "You sacrifice 15 HP to help them.\n" +
                         "They reward you with " + item.name
                     );
                     usedChoices.add(1);
-                });
+                });*/
             }
             
             if (!usedChoices.contains(2)) {
@@ -187,8 +187,8 @@ public class Zone {
                         "You steal 75 gold!\n" +
                         "Suddenly, guards appear!"
                     );
-                    Enemy enemy = new Enemy(List.of(), "Town Guard Ryan", 120, 35, 15, EntityClass.Warrior);
-                    enemy.handleCombat(player, sc);
+                    //Enemy enemy = new Enemy(List.of(), "Town Guard Ryan", 120, 35, 15, EntityClass.Warrior);
+                    //enemy.handleCombat(player, sc);
                     usedChoices.add(2);
                 });
             }
@@ -221,9 +221,9 @@ public class Zone {
                 options.add("[1] Pick the lock carefully");
                 actions.add(() -> {
                     if (random.nextInt(100) < player.level * 10) {
-                        Item item = BuffPotion.PowerJuice();
-                        player.addItemToInventory(item);
-                        App.displayEventOutcome("Success! Found: " + item.name);
+                        //Item item = BuffPotion.PowerJuice();
+                        //player.addItemToInventory(item);
+                        //App.displayEventOutcome("Success! Found: " + item.name);
                     } else {
                         App.displayEventOutcome("The lock resists your attempts.");
                     }
@@ -235,9 +235,9 @@ public class Zone {
                 options.add("[2] Force it open");
                 actions.add(() -> {
                     if (random.nextBoolean()) {
-                        Item item = HealingPotion.maxPotion();
-                        player.addItemToInventory(item);
-                        App.displayEventOutcome("The chest breaks open! Found: " + item.name);
+                        //Item item = HealingPotion.maxPotion();
+                        //player.addItemToInventory(item);
+                        //App.displayEventOutcome("The chest breaks open! Found: " + item.name);
                     } else {
                         player.hp -= 40;
                         App.displayEventOutcome("A trap explodes! (-40 HP)");

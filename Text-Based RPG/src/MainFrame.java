@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +12,7 @@ public class MainFrame extends JFrame{
     final int SCREENHEIGHT = 700;
 
     public enum GameState{
-        MainMenu, Game
+        MainMenu, Introduction,Game
     }
 
     GameState currentGameState = GameState.MainMenu;
@@ -25,6 +24,9 @@ public class MainFrame extends JFrame{
     JPanel mainPanel;
 
     String[] introductionDialogues = {"Welcome Vaiken: Last Legacy", "A game where you can explore, fight enemies, and gather loot!", "classchoice", "namechoice"};
+    
+    Player player;
+
 
     public MainFrame(String title) throws IOException, LineUnavailableException{
         super(title);
@@ -44,6 +46,10 @@ public class MainFrame extends JFrame{
 
         initMainMenu(this, mainPanel, cardLayout);
         initIntroductionInterface(this, mainPanel, cardLayout);
+        
+        while (player != null) { 
+            System.out.println(player.name);
+        }
     }
 
     public void updateGameState(GameState gameState){
@@ -51,9 +57,12 @@ public class MainFrame extends JFrame{
 
         if(currentGameState == GameState.MainMenu){
             System.out.println("Menu");
-        }else if(currentGameState == GameState.Game){
-            cardLayout.show(mainPanel, "GamePanel");
+        }else if(currentGameState == GameState.Introduction){
+            cardLayout.show(mainPanel, "IntroductionPanel");
             StopMusic(menuMusicFile, menuClip);
+        }else if(currentGameState == GameState.Game){
+            cardLayout.show(mainPanel, "");
+            System.out.println(player.name);
         }
     }
     
@@ -63,10 +72,8 @@ public class MainFrame extends JFrame{
     }
 
     private void initIntroductionInterface(JFrame frame, JPanel mainPanel, CardLayout cardLayout){
-        IntroductionClickablePanel introductionPanel = new IntroductionClickablePanel();
-        introductionPanel.setBackground(Color.BLACK);
-        introductionPanel.setLayout(null);
-        introductionPanel.setSize(new Dimension(800, 700));
+        IntroductionClickablePanel introductionPanel = new IntroductionClickablePanel(cardLayout, mainPanel, this);
+        
 
         JLabel introductionLabel = new JLabel("<html>" + introductionDialogues[0] + "<html>");
         Font font = new Font("SansSerif",Font.PLAIN,32);
@@ -80,11 +87,12 @@ public class MainFrame extends JFrame{
 
         //Add panels to both frame and cardLayout
         frame.add(introductionPanel);
-        mainPanel.add(introductionPanel, "GamePanel");
+        mainPanel.add(introductionPanel, "IntroductionPanel");
         introductionPanel.add(introductionLabel);
+    }
 
-        
-
+    public void initPlayer(String inputtedName, int classChosen){
+        player = Player.createPlayer(inputtedName, classChosen);
     }
 
     public static void PlayMusic(File musicPath, Clip clip){

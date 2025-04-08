@@ -9,9 +9,22 @@ public class IntroductionClickablePanel extends JPanel implements MouseListener{
     String[] texts;
     boolean isContinuable;
 
-    Player player;
+    CardLayout cardLayout;
+    JPanel mainPanel;
+    MainFrame frame;
 
-    public IntroductionClickablePanel() {
+    String inputtedName;
+    int classChosen;
+
+    public IntroductionClickablePanel(CardLayout cardLayout, JPanel mainPanel, MainFrame frame) {
+        this.cardLayout = cardLayout;
+        this.mainPanel = mainPanel;
+        this.frame = frame;
+
+        this.setBackground(Color.BLACK);
+        this.setLayout(null);
+        this.setSize(new Dimension(800, 700));
+
         addMouseListener(this);
     }
     
@@ -22,30 +35,47 @@ public class IntroductionClickablePanel extends JPanel implements MouseListener{
     }
 
     private void nameChoice(JLabel mainLabel){
-        TextArea nameInput = new TextArea("Input your name here.");
+        JTextField nameInput = new JTextField("Input your name here.");
+        JButton submitButton = new JButton("Submit");
 
-        nameInput.setBounds(200, 350, 400, 100);
-        this.add(nameInput);
+        nameInput.setBounds(200, 350, 400, 20);
+        nameInput.setForeground(Color.blue);
+        
+        submitButton.setBounds(362, 400, 75, 40);
+        submitButton.addActionListener(e -> onSubmitButtonClick(submitButton, nameInput));
+
         mainLabel.setText("What is your name?");
+        
+        this.setLayout(null);
+        this.repaint();
+        this.add(nameInput);
+        this.add(submitButton);
+        
     }
 
-    private void destroyButtons(JButton[] buttons){
+    private void onSubmitButtonClick(JButton button, JTextField nameInput){
+        inputtedName = nameInput.getText();
+        //show next cardlayout.
+        frame.initPlayer(inputtedName, classChosen);
+        frame.updateGameState(MainFrame.GameState.Game);
+        cardLayout.show(mainPanel, "");
+    }
+
+    private void onClassesButtonClick(JButton[] buttons, JPanel classesPanel, int classChoice){
+        classChosen = classChoice;
         for(JButton i: buttons){
-            this.remove(i);
+            i.setVisible(false);
+            classesPanel.remove(i);
+            
         }
+        isContinuable = true; 
+        loopThroughDialogues();
     }
 
-    @Override
-    public void mouseClicked(java.awt.event.MouseEvent e) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void mousePressed(java.awt.event.MouseEvent e) {
-        // TODO Auto-generated method stub
+    private void loopThroughDialogues(){
         if(!isContinuable) return;
 
-        if(count < texts.length){
+        if(count <= texts.length - 1){
             label.setText("<html>" + texts[count] + "<html>");
 
             if("classchoice".equals(texts[count])){
@@ -65,10 +95,10 @@ public class IntroductionClickablePanel extends JPanel implements MouseListener{
                 JButton summonerButton = new JButton("Summoner");
                 JButton[] buttons = {warriorButton, mageButton, tankButton, summonerButton};
 
-                warriorButton.addActionListener(event -> {Player.chooseClass(0); destroyButtons(buttons);});
-                mageButton.addActionListener(event -> {Player.chooseClass(1);});
-                tankButton.addActionListener(event -> {Player.chooseClass(2);});
-                summonerButton.addActionListener(event -> {Player.chooseClass(3);});
+                warriorButton.addActionListener(event -> {; onClassesButtonClick(buttons, classesPanel, 0);});
+                mageButton.addActionListener(event -> {onClassesButtonClick(buttons, classesPanel, 1); });
+                tankButton.addActionListener(event -> {onClassesButtonClick(buttons, classesPanel, 2);});
+                summonerButton.addActionListener(event -> {onClassesButtonClick(buttons, classesPanel, 3);});
 
                 classesPanel.add(warriorButton);
                 classesPanel.add(mageButton);
@@ -77,32 +107,36 @@ public class IntroductionClickablePanel extends JPanel implements MouseListener{
                 this.repaint();
 
                 this.add(classesPanel);
-                isContinuable = true;
             }
-            
-            if("namechoice".equals(texts[count])){
 
+
+            if("namechoice".equals(texts[count])){
+                isContinuable = false;
+                nameChoice(label);
             }
             count++;
         }
+    }
+
+    @Override
+    public void mouseClicked(java.awt.event.MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(java.awt.event.MouseEvent e) {
+       loopThroughDialogues();
         
     }
 
     @Override
     public void mouseReleased(java.awt.event.MouseEvent e) {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void mouseEntered(java.awt.event.MouseEvent e) {
-        // TODO Auto-generated method stub
-       
     }
 
     @Override
     public void mouseExited(java.awt.event.MouseEvent e) {
-        // TODO Auto-generated method stub
-        
     }
 }

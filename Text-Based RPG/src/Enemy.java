@@ -6,21 +6,21 @@ public class Enemy extends Entity {
 
     // Boss enemies
     private static final List<Enemy> BOSSES = List.of(
-        new Enemy(List.of(HealingPotion.maxPotion()), "Dragon", 500, 100, 50,  EntityClass.Warrior),
-        new Enemy(List.of(BuffPotion.MindJuice()), "Dark Mage", 300, 150, 30, EntityClass.Mage),
-        new Enemy(List.of(AilmentPotion.Remedy()), "Demon King", 800, 120, 80, EntityClass.Warrior),
-        new Enemy(List.of(HealingPotion.maxPotion()), "Sung Jin Who?", 700, 200, 70, EntityClass.Summoner)
+        //new Enemy(List.of(HealingPotion.maxPotion()), "Dragon", 500, 100, 50,  EntityClass.Warrior),
+        //new Enemy(List.of(BuffPotion.MindJuice()), "Dark Mage", 300, 150, 30, EntityClass.Mage),
+        //new Enemy(List.of(AilmentPotion.Remedy()), "Demon King", 800, 120, 80, EntityClass.Warrior),
+        //new Enemy(List.of(HealingPotion.maxPotion()), "Sung Jin Who?", 700, 200, 70, EntityClass.Summoner)
     );
     
     // Regular enemies
     private static final List<Enemy> REGULAR_ENEMIES = List.of(
-        new Enemy(new ArrayList<>(), "Goblin", 100, 30, 10, EntityClass.Warrior),
-        new Enemy(new ArrayList<>(), "Wolf", 80, 40, 5, EntityClass.Warrior),
-        new Enemy(new ArrayList<>(), "Slime", 50, 20, 2, EntityClass.Warrior)
+        new Enemy(new ArrayList<>(), "Goblin", 100, 30, 10, 10, EntityClass.Warrior),
+        new Enemy(new ArrayList<>(), "Wolf", 80, 40, 5,10, EntityClass.Warrior),
+        new Enemy(new ArrayList<>(), "Slime", 50, 20, 2,10, EntityClass.Warrior)
     );
 
-    public Enemy(List<Item> itemDrop, String name, int hp, int atk, int def, EntityClass entityClass) {
-        super(name, hp, atk, def, entityClass);
+    public Enemy(List<Item> itemDrop, String name, int hp, int atk, int def, int mp, EntityClass entityClass) {
+        super(name, hp, atk, def, mp,entityClass);
         this.itemDrop = itemDrop;
     }
 

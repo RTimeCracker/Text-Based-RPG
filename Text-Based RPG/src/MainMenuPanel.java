@@ -110,7 +110,7 @@ public class MainMenuPanel extends JPanel{
 
         mainPanel.add(backgroundPanel, "MainMenuPanel");
         mainPanel.add(creditsPanel,"Credits");
-        playButton.addActionListener(e -> {frame.updateGameState(MainFrame.GameState.Game);});
+        playButton.addActionListener(e -> {frame.updateGameState(MainFrame.GameState.Introduction);});
         creditsButton.addActionListener(e -> cardLayout.show(mainPanel, "Credits"));
         closeCreditsButton.addActionListener(e -> cardLayout.show(mainPanel, "MainMenuPanel"));
         exitButton.addActionListener(e -> System.exit(0));

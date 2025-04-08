@@ -12,11 +12,11 @@ public class App {
         MainFrame frame = new MainFrame("Vaiken: Last Legacy");
         
         startingZone = new Zone(ZoneType.Village, 0, 0);
-        player = Player.createPlayer(sc);
-        player.zone = startingZone;
+        //player = Player.createPlayer(sc);
+        //player.zone = startingZone;
         
         while (true) {
-            explorePrompt();
+            //explorePrompt();
         }
     }
 
