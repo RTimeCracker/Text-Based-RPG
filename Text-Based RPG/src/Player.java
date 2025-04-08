@@ -9,6 +9,8 @@ public class Player extends Entity {
     private int expToNextLevel;
     public int money;
     public List<Item> inventory;
+
+    private static int classChoice;
     
     Zone zone;
     private int xPos = 0, yPos = 0;
@@ -54,33 +56,25 @@ public class Player extends Entity {
         }
     }
 
-    public static Player createPlayer(Scanner scanner) {
-        App.displayClassSelection();
-        for (int i = 0; i < EntityClass.values().length; i++) {
-            App.displayClassOption(i + 1, EntityClass.values()[i].toString());
-        }
 
-        int classChoice = 0;
-        while (classChoice < 1 || classChoice > EntityClass.values().length) {
-            App.promptClassChoice();
-            try {
-                classChoice = scanner.nextInt();
-                scanner.nextLine();
-            } catch (Exception e) {
-                scanner.nextLine();
-                App.displayInputError();
-            }
-        }
+    public static Player createPlayer(Scanner scanner) {
+
 
         App.promptPlayerName();
         String name = scanner.nextLine();
 
-        EntityClass chosenClass = EntityClass.values()[classChoice - 1];
-        App.displayChosenClass(chosenClass.toString());
-        App.displayClassDescription(getClassDescription(chosenClass));
+        //EntityClass chosenClass = EntityClass.values()[classChoice - 1];
+        //App.displayChosenClass(chosenClass.toString());
+        //App.displayClassDescription(getClassDescription(chosenClass));
 
-        return new Player(name, 100, chosenClass);
+        return new Player(name, 100, EntityClass.Warrior);
     }
+
+    public static void chooseClass(int classChoice2){
+        if(classChoice2 >= 0 && classChoice2 <= 3){
+            classChoice = classChoice2;
+        }
+    } 
 
     private static String getClassDescription(EntityClass playerClass) {
         switch (playerClass) {
