@@ -79,12 +79,15 @@ public class MainFrame extends JFrame{
     }
 
     public void update(){
-
+        if(currentGameState == GameState.Exploration){
+            explorationPanel.rePaint();
+        }else if(currentGameState == GameState.Encounter){
+            encounterPanel.rePaint();
+        }
     }
     
     private void initMainMenu() throws IOException{
         MainMenuPanel mainMenuPanel = new MainMenuPanel(this, mainPanel, cardLayout);
-        
     }
 
     private void initIntroductionInterface(){

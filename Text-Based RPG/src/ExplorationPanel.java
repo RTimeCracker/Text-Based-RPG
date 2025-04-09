@@ -12,6 +12,8 @@ public class ExplorationPanel extends JLayeredPane{
     JButton[] directionButtons = new JButton[4];
     JLabel dialogueLabel = new JLabel();
 
+    BackgroundPanel backgroundPanel;
+
     Player player;
 
     public ExplorationPanel(MainFrame frame, Player player) throws IOException{
@@ -40,6 +42,7 @@ public class ExplorationPanel extends JLayeredPane{
         this.player.move(x,y);
         if(player.zone.zoneType == ZoneType.Encounter || player.zone.zoneType == ZoneType.Dungeon){
             frame.updateGameState(MainFrame.GameState.Encounter);
+            frame.update();
         }
         //either encounter, village or dungeon
     }
@@ -82,15 +85,31 @@ public class ExplorationPanel extends JLayeredPane{
         }
     }
 
-    private void setBackground() throws IOException{
-        BufferedImage menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\Backgrounds\\BattleGround1.jpg"));
-        Image scaledImage = menuBackgroundImage.getScaledInstance(frame.SCREENWIDTH, frame.SCREENHEIGHT, Image.SCALE_SMOOTH);
-        BackgroundPanel backgroundPanel = new BackgroundPanel(scaledImage);
+    public  void setBackground(){
+        try {
+            BufferedImage menuBackgroundImage;
+            menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\\\Images\\\\Backgrounds\\\\BattleGround1.jpg"));
+            System.out.println(player.zone.zoneType);
+            if(player.zone.zoneType == ZoneType.Dungeon){
+                menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\Backgrounds\\Battleground 4.jpg"));
+            }
+            
+            Image scaledImage = menuBackgroundImage.getScaledInstance(frame.SCREENWIDTH, frame.SCREENHEIGHT, Image.SCALE_SMOOTH);
+            backgroundPanel = new BackgroundPanel(scaledImage);
+    
+            backgroundPanel.setMaximumSize(new Dimension(frame.SCREENWIDTH,frame.SCREENHEIGHT));
+            backgroundPanel.setSize(new Dimension(frame.SCREENWIDTH,frame.SCREENHEIGHT));
+            this.add(backgroundPanel, Integer.valueOf(0));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
-        backgroundPanel.setMaximumSize(new Dimension(frame.SCREENWIDTH,frame.SCREENHEIGHT));
-        backgroundPanel.setSize(new Dimension(frame.SCREENWIDTH,frame.SCREENHEIGHT));
-        this.add(backgroundPanel, Integer.valueOf(0));
+    public void rePaint(){
+        setBackground();
 
-        
     }
 }
+
+

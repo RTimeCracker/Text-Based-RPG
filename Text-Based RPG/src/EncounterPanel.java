@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
@@ -9,9 +11,26 @@ public class EncounterPanel extends JLayeredPane{
     MainFrame frame;
     Player player;
 
+    JLabel enemyLabel;
+    ImageIcon enemyImage;
+
     JPanel panelBox;
+    JPanel panelOptions;
+    JPanel panelDialogue;
     JPanel panelStatus;
     JPanel panelCommands;
+
+    JLabel labelDialogue;
+
+    String[] dialogueTexts;
+    int dialogueCount;
+
+    CardLayout panelCardLayout = new CardLayout();
+
+    JLabel HP;
+    JLabel LVL;
+
+    BackgroundPanel backgroundPanel;
 
     public EncounterPanel(MainFrame frame, Player player){
         this.frame = frame;
@@ -20,7 +39,7 @@ public class EncounterPanel extends JLayeredPane{
 
         setPanelBox();
         setBackground();
-        setEnemyImage();
+        setEnemy();
     }
 
     private void setPanelBox(){
@@ -30,19 +49,38 @@ public class EncounterPanel extends JLayeredPane{
         panelBox.setBackground(Color.white);
         panelBox.setOpaque(true);
         panelBox.setBorder(panelBorder);
-        panelBox.setLayout(null);
+        panelBox.setLayout(panelCardLayout);
+
+        panelOptions = new JPanel();
+        panelOptions.setBounds(25,450,750,200);
+        panelOptions.setLayout(null);
+
+        panelDialogue = new JPanel();
+        panelDialogue.setBounds(25,450,750,200);
+        panelDialogue.setLayout(new FlowLayout(FlowLayout.LEFT));
+        panelDialogue.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                onDialoguePanelClick();
+            }
+        });
+
+        labelDialogue = new JLabel();
+        labelDialogue.setFont(new Font("Roboto",Font.BOLD,32));
+
+        panelDialogue.add(labelDialogue);
 
         panelStatus = new JPanel();   
         panelStatus.setOpaque(false);        
         panelStatus.setBounds(3,3,372, 194);
         panelStatus.setLayout(new BoxLayout(panelStatus,BoxLayout.PAGE_AXIS));
 
-        JLabel HP = new JLabel("HP:");
+        HP = new JLabel("HP:");
         HP.setMaximumSize(new Dimension(200, 50));
         HP.setPreferredSize(new Dimension(200, 30));
         HP.setFont(new Font("Roboto",Font.BOLD,32));
 
-        JLabel LVL = new JLabel("LVL:");
+        LVL = new JLabel("LVL:");
         LVL.setMaximumSize(new Dimension(200, 50));
         LVL.setPreferredSize(new Dimension(200, 30));
         LVL.setFont(new Font("Roboto",Font.BOLD,12));
@@ -59,26 +97,55 @@ public class EncounterPanel extends JLayeredPane{
 
         JButton AttackButton = new JButton("Attack");
         JButton Inventory = new JButton("Inventory");
+
+        AttackButton.addActionListener(e -> onAttackButtonClick());
         
         panelCommands.add(AttackButton);
         panelCommands.add(Inventory);
 
-        panelBox.add(panelStatus);        
-        panelBox.add(panelCommands);
+        panelOptions.add(panelStatus);
+        panelOptions.add(panelCommands);
+
+        panelBox.add(panelOptions, "PanelOptions");        
+        panelCardLayout.show(panelBox, "PanelOptions");
+        panelBox.add(panelDialogue, "PanelDialogue");
+
         this.add(panelBox, Integer.valueOf(1));
     }
 
+    private void onDialoguePanelClick(){    
+        if(dialogueCount < dialogueTexts.length - 1){
+            labelDialogue.setText(dialogueTexts[dialogueCount]);
+            dialogueCount++;
+        }else{
+            panelCardLayout.show(panelBox, "PanelOptions");
+        }
+    }
 
+    private void insertDialogue(String[] texts){
+        dialogueTexts = texts;
+    }
 
-    private void setEnemyImage(){
-        JLabel enemyLabel = new JLabel("<html><body style='text-align:center;'>HP:<br>ORIT THE ENEMY</body></html>");
+    private void onAttackButtonClick(){
+        String[] texts = {"Attacked Enemy"};
+        insertDialogue(texts);
+
+        labelDialogue.setText(texts[0]);
+
+        panelCardLayout.show(panelBox, "PanelDialogue");
+    }
+
+    private void setEnemy(){
+        enemyLabel = new JLabel("<html><body style='text-align:center;'>HP:<br>ORIT THE ENEMY</body></html>");
         enemyLabel.setBounds(275, 50, 250, 400);
         enemyLabel.setFont(new Font("Roboto",Font.BOLD,32));
         enemyLabel.setHorizontalAlignment(JLabel.CENTER);
         enemyLabel.setVerticalTextPosition(JLabel.TOP);
         enemyLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         enemyLabel.setVerticalAlignment(JLabel.BOTTOM);
-        ImageIcon enemyImage = new ImageIcon((new ImageIcon("Text-Based RPG\\Images\\Enemy\\OritEnemy.png").getImage()).getScaledInstance(250, 250,Image.SCALE_SMOOTH));
+        enemyLabel.setForeground(Color.BLACK);
+
+        enemyImage = new ImageIcon((new ImageIcon("Text-Based RPG\\Images\\Enemy\\OritEnemy.png").getImage()).getScaledInstance(250, 250,Image.SCALE_SMOOTH));
         
         enemyLabel.setIcon(enemyImage);
         this.add(enemyLabel,Integer.valueOf(1));
@@ -92,12 +159,11 @@ public class EncounterPanel extends JLayeredPane{
             menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\\\Images\\\\Backgrounds\\\\BattleGround1.jpg"));
             System.out.println(player.zone.zoneType);
             if(player.zone.zoneType == ZoneType.Dungeon){
-                System.out.println("Wat");
-                menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\Backgrounds\\Battleground 4.jpg"));
+                menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\Backgrounds\\Battleground4.jpg"));
             }
             
             Image scaledImage = menuBackgroundImage.getScaledInstance(frame.SCREENWIDTH, frame.SCREENHEIGHT, Image.SCALE_SMOOTH);
-            BackgroundPanel backgroundPanel = new BackgroundPanel(scaledImage);
+            backgroundPanel = new BackgroundPanel(scaledImage);
     
             backgroundPanel.setMaximumSize(new Dimension(frame.SCREENWIDTH,frame.SCREENHEIGHT));
             backgroundPanel.setSize(new Dimension(frame.SCREENWIDTH,frame.SCREENHEIGHT));
@@ -106,8 +172,16 @@ public class EncounterPanel extends JLayeredPane{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-      
+    }
 
-        
+    public void rePaint(){
+        this.remove(backgroundPanel);
+        this.remove(enemyLabel);
+        setBackground();
+        setEnemy();
+    }
+
+    public void update(){
+
     }
 }
