@@ -12,13 +12,18 @@ public class ExplorationPanel extends JLayeredPane{
     JButton[] directionButtons = new JButton[4];
     JLabel dialogueLabel = new JLabel();
 
+    CardLayout cardLayout;
+    JPanel mainPanel;
+
     Player player;
 
-    public ExplorationPanel(MainFrame frame, Player player) throws IOException{
+    public ExplorationPanel(MainFrame frame, Player player, CardLayout cardLayout, JPanel mainPanel) throws IOException{
         this.frame = frame;
         this.setSize(new Dimension(frame.SCREENWIDTH, frame.SCREENHEIGHT));
         this.setLayout(null);
         this.player = player;
+        this.cardLayout = cardLayout;
+        this.mainPanel = mainPanel;
 
         setBackground();
         setButtons();

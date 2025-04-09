@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import javax.swing.*;
 
 public class IntroductionClickablePanel extends JPanel implements MouseListener{
@@ -58,6 +59,11 @@ public class IntroductionClickablePanel extends JPanel implements MouseListener{
         //show next cardlayout.
         frame.initPlayer(inputtedName, classChosen);
         frame.updateGameState(MainFrame.GameState.Game);
+        try {
+            frame.initExplorationInterface();
+            frame.initEncounterPanel();
+        } catch (IOException ex) {
+        }
         cardLayout.show(mainPanel, "ExplorationPanel");
     }
 

@@ -101,7 +101,6 @@ public class MainFrame extends JFrame{
 
     public void initPlayer(String inputtedName, int classChosen){
         this.player = Player.createPlayer(inputtedName, classChosen);
-        System.out.println(this.player);
     }
 
     public static void PlayMusic(File musicPath, Clip clip){
