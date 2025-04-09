@@ -12,18 +12,13 @@ public class ExplorationPanel extends JLayeredPane{
     JButton[] directionButtons = new JButton[4];
     JLabel dialogueLabel = new JLabel();
 
-    CardLayout cardLayout;
-    JPanel mainPanel;
-
     Player player;
 
-    public ExplorationPanel(MainFrame frame, Player player, CardLayout cardLayout, JPanel mainPanel) throws IOException{
+    public ExplorationPanel(MainFrame frame, Player player) throws IOException{
         this.frame = frame;
         this.setSize(new Dimension(frame.SCREENWIDTH, frame.SCREENHEIGHT));
         this.setLayout(null);
         this.player = player;
-        this.cardLayout = cardLayout;
-        this.mainPanel = mainPanel;
 
         setBackground();
         setButtons();
@@ -43,6 +38,9 @@ public class ExplorationPanel extends JLayeredPane{
 
     private void onButtonClick(int x, int y){
         this.player.move(x,y);
+        if(player.zone.zoneType == ZoneType.Encounter || player.zone.zoneType == ZoneType.Dungeon){
+            frame.updateGameState(MainFrame.GameState.Encounter);
+        }
         //either encounter, village or dungeon
     }
 
@@ -85,7 +83,7 @@ public class ExplorationPanel extends JLayeredPane{
     }
 
     private void setBackground() throws IOException{
-        BufferedImage menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\BattleGround1.jpg"));
+        BufferedImage menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\Backgrounds\\BattleGround1.jpg"));
         Image scaledImage = menuBackgroundImage.getScaledInstance(frame.SCREENWIDTH, frame.SCREENHEIGHT, Image.SCALE_SMOOTH);
         BackgroundPanel backgroundPanel = new BackgroundPanel(scaledImage);
 

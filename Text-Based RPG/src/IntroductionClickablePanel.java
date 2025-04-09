@@ -9,17 +9,12 @@ public class IntroductionClickablePanel extends JPanel implements MouseListener{
     JLabel label;
     String[] texts;
     boolean isContinuable;
-
-    CardLayout cardLayout;
-    JPanel mainPanel;
     MainFrame frame;
 
     String inputtedName;
     int classChosen;
 
-    public IntroductionClickablePanel(CardLayout cardLayout, JPanel mainPanel, MainFrame frame) {
-        this.cardLayout = cardLayout;
-        this.mainPanel = mainPanel;
+    public IntroductionClickablePanel(MainFrame frame, String[] introductionDialogues) {
         this.frame = frame;
 
         this.setBackground(Color.BLACK);
@@ -27,6 +22,19 @@ public class IntroductionClickablePanel extends JPanel implements MouseListener{
         this.setSize(new Dimension(800, 700));
 
         addMouseListener(this);
+
+        JLabel introductionLabel = new JLabel("<html>" + introductionDialogues[0] + "<html>");
+        Font font = new Font("SansSerif",Font.PLAIN,32);
+
+        this.insertDialogues(introductionLabel,introductionDialogues,true);
+        introductionLabel.setForeground(Color.white);
+        introductionLabel.setBounds(new Rectangle(200,100, 400,400));
+        introductionLabel.setFont(font);
+        introductionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        introductionLabel.setVerticalAlignment(SwingConstants.TOP);
+
+        this.add(introductionLabel);
+
     }
     
     public void insertDialogues(JLabel label, String[] texts, boolean isContinuable){
@@ -58,13 +66,13 @@ public class IntroductionClickablePanel extends JPanel implements MouseListener{
         inputtedName = nameInput.getText();
         //show next cardlayout.
         frame.initPlayer(inputtedName, classChosen);
-        frame.updateGameState(MainFrame.GameState.Game);
+        frame.updateGameState(MainFrame.GameState.Exploration);
         try {
             frame.initExplorationInterface();
             frame.initEncounterPanel();
         } catch (IOException ex) {
         }
-        cardLayout.show(mainPanel, "ExplorationPanel");
+        frame.updateGameState(MainFrame.GameState.Exploration);
     }
 
     private void onClassesButtonClick(JButton[] buttons, JPanel classesPanel, int classChoice){

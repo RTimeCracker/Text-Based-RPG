@@ -11,7 +11,7 @@ public class MainMenuPanel extends JPanel{
     public MainMenuPanel(MainFrame frame, JPanel mainPanel, CardLayout cardLayout) throws IOException{
         this.setPreferredSize(new Dimension(frame.SCREENWIDTH,frame.SCREENHEIGHT));
 
-        BufferedImage menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\MenuBackground.png"));
+        BufferedImage menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\Backgrounds\\MenuBackground.png"));
         Image scaledImage = menuBackgroundImage.getScaledInstance(frame.SCREENWIDTH, frame.SCREENHEIGHT, Image.SCALE_SMOOTH);
         BackgroundPanel backgroundPanel = new BackgroundPanel(scaledImage);
         this.setLayout(new BorderLayout());

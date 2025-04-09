@@ -12,7 +12,7 @@ public class MainFrame extends JFrame{
     final int SCREENHEIGHT = 700;
 
     public enum GameState{
-        MainMenu, Introduction,Game
+        MainMenu, Introduction, Exploration, Encounter
     }
 
     GameState currentGameState = GameState.MainMenu;
@@ -22,6 +22,10 @@ public class MainFrame extends JFrame{
 
     CardLayout cardLayout;
     JPanel mainPanel;
+
+    IntroductionClickablePanel introductionPanel;
+    ExplorationPanel explorationPanel;
+    EncounterPanel encounterPanel;
 
     String[] introductionDialogues = {"Welcome Vaiken: Last Legacy", "A game where you can explore, fight enemies, and gather loot!", "classchoice", "namechoice"};
     
@@ -52,14 +56,30 @@ public class MainFrame extends JFrame{
     public void updateGameState(GameState gameState){
         currentGameState = gameState;
 
-        if(currentGameState == GameState.MainMenu){
-            System.out.println("Menu");
-        }else if(currentGameState == GameState.Introduction){
-            cardLayout.show(mainPanel, "IntroductionPanel");
-            StopMusic(menuMusicFile, menuClip);
-        }else if(currentGameState == GameState.Game){
-            cardLayout.show(mainPanel, "");
+        if(null != currentGameState)switch (currentGameState) {
+            case MainMenu:
+                System.out.println("Menu");
+                break;
+
+            case Introduction:
+                switchPanel("IntroductionPanel");
+                StopMusic(menuMusicFile, menuClip);
+                break;
+
+            case Exploration:
+                switchPanel("ExplorationPanel");
+                break;
+
+            case Encounter:
+                switchPanel("EncounterPanel");
+                break;
+            default:
+                break;
         }
+    }
+
+    public void update(){
+
     }
     
     private void initMainMenu() throws IOException{
@@ -68,27 +88,15 @@ public class MainFrame extends JFrame{
     }
 
     private void initIntroductionInterface(){
-        IntroductionClickablePanel introductionPanel = new IntroductionClickablePanel(cardLayout, mainPanel, this);
+        introductionPanel = new IntroductionClickablePanel(this,introductionDialogues);
         
-
-        JLabel introductionLabel = new JLabel("<html>" + introductionDialogues[0] + "<html>");
-        Font font = new Font("SansSerif",Font.PLAIN,32);
-
-        introductionPanel.insertDialogues(introductionLabel,introductionDialogues,true);
-        introductionLabel.setForeground(Color.white);
-        introductionLabel.setBounds(new Rectangle(200,100, 400,400));
-        introductionLabel.setFont(font);
-        introductionLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        introductionLabel.setVerticalAlignment(SwingConstants.TOP);
-
         //Add panels to both frame and cardLayout
         this.add(introductionPanel);
         mainPanel.add(introductionPanel, "IntroductionPanel");
-        introductionPanel.add(introductionLabel);
     }
 
     public void initExplorationInterface() throws IOException{
-        ExplorationPanel explorationPanel = new ExplorationPanel(this, player);
+        explorationPanel = new ExplorationPanel(this, player);
 
         this.add(explorationPanel);
         mainPanel.add(explorationPanel, "ExplorationPanel");
@@ -96,11 +104,18 @@ public class MainFrame extends JFrame{
     }
 
     public void initEncounterPanel(){
-        EncounterPanel encounterPanel = new EncounterPanel(this,player);
+        encounterPanel = new EncounterPanel(this,player);
+
+        this.add(encounterPanel);
+        mainPanel.add(encounterPanel, "EncounterPanel");
     }
 
     public void initPlayer(String inputtedName, int classChosen){
         this.player = Player.createPlayer(inputtedName, classChosen);
+    }
+
+    private void switchPanel(String text){
+        cardLayout.show(mainPanel, text);
     }
 
     public static void PlayMusic(File musicPath, Clip clip){
