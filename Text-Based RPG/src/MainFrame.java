@@ -46,7 +46,6 @@ public class MainFrame extends JFrame{
 
         initMainMenu();
         initIntroductionInterface();
-        initExplorationInterface();
         
     }
 
@@ -60,7 +59,6 @@ public class MainFrame extends JFrame{
             StopMusic(menuMusicFile, menuClip);
         }else if(currentGameState == GameState.Game){
             cardLayout.show(mainPanel, "");
-            System.out.println(player.name);
         }
     }
     
@@ -89,16 +87,21 @@ public class MainFrame extends JFrame{
         introductionPanel.add(introductionLabel);
     }
 
-    private void initExplorationInterface() throws IOException{
-        ExplorationPanel explorationPanel = new ExplorationPanel(this);
+    public void initExplorationInterface() throws IOException{
+        ExplorationPanel explorationPanel = new ExplorationPanel(this, player);
 
         this.add(explorationPanel);
         mainPanel.add(explorationPanel, "ExplorationPanel");
 
     }
 
+    public void initEncounterPanel(){
+        EncounterPanel encounterPanel = new EncounterPanel(this,player);
+    }
+
     public void initPlayer(String inputtedName, int classChosen){
-        player = Player.createPlayer(inputtedName, classChosen);
+        this.player = Player.createPlayer(inputtedName, classChosen);
+        System.out.println(this.player);
     }
 
     public static void PlayMusic(File musicPath, Clip clip){

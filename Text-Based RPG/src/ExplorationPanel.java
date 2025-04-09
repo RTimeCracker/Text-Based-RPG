@@ -10,43 +10,71 @@ public class ExplorationPanel extends JLayeredPane{
     MainFrame frame;
 
     JButton[] directionButtons = new JButton[4];
-    JPanel directionButtonsPanel = new JPanel();
+    JLabel dialogueLabel = new JLabel();
 
-    public ExplorationPanel(MainFrame frame) throws IOException{
+    Player player;
+
+    public ExplorationPanel(MainFrame frame, Player player) throws IOException{
         this.frame = frame;
         this.setSize(new Dimension(frame.SCREENWIDTH, frame.SCREENHEIGHT));
         this.setLayout(null);
+        this.player = player;
 
         setBackground();
         setButtons();
-        
+        setDialogue();
+    }
+
+    private void setDialogue(){
+        dialogueLabel.setText("Where would you like to go?");
+        dialogueLabel.setBounds(100, 40, 600 ,300);
+        dialogueLabel.setFont(new Font("Roboto",Font.BOLD,32));
+        dialogueLabel.setForeground(Color.BLACK);
+        dialogueLabel.setHorizontalAlignment(JLabel.CENTER);
+        dialogueLabel.setVerticalAlignment(JLabel.TOP);
+
+        this.add(dialogueLabel, Integer.valueOf(1));
+    }
+
+    private void onButtonClick(int x, int y){
+        this.player.move(x,y);
+        //either encounter, village or dungeon
     }
 
     private void setButtons(){
-        this.add(directionButtonsPanel, Integer.valueOf(1));
+
         for (int i = 0; i < 4; i++) {
-            JButton button = new JButton();
-            button.setSize(100,50);
+            JButton button = new JButton(); 
+            
 
             switch (i) {
                 case 0:
+                    button.setText("North");
+                    button.setBounds(360,350, 80,50);
+                    button.addActionListener(e -> onButtonClick(0, 1));
                     break;
                 case 1:
-                    
+                    button.setText("East");
+                    button.setBounds(520,450, 80,50);
+                    button.addActionListener(e -> onButtonClick(1, 0));
                     break;
 
                 case 2:
-                        
+                    button.setText("South");
+                    button.setBounds(360,575, 80,50);
+                    button.addActionListener(e -> onButtonClick(0, -1));
                     break;
 
                 case 3:
-                    
+                button.setText("West");
+                button.setBounds(200,450, 80,50);
+                button.addActionListener(e -> onButtonClick(-1, 0));
                     break;
                 default:
     
             }
-
-            directionButtonsPanel.add(button);
+            
+            this.add(button, Integer.valueOf(1));
             directionButtons[i] = button;
         }
     }
