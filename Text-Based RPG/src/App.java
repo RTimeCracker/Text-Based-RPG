@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import javax.sound.sampled.*;
@@ -249,6 +250,36 @@ public class App {
 
     public static void displayItemSold(String itemName) {
         System.out.println("\nSold " + itemName + " for 50 gold!");
+    }
+
+    public static void displayStatusEffect(String message) {
+        System.out.println("\n[!] " + message);
+    }
+    
+    public static void displayCombatStatus(Player player, Enemy enemy) {
+        System.out.println("\n====================");
+        System.out.println(player.name + ":");
+        System.out.println("HP: " + player.hp + "/" + player.getMaxHp());
+        System.out.println("MP: " + player.mp + "/" + player.getMaxMp());
+        System.out.println("Status: " + getStatusString(player));
+        
+        System.out.println("\n" + enemy.name + ":");
+        System.out.println("HP: " + enemy.hp);
+        System.out.println("Status: " + getStatusString(enemy));
+        System.out.println("====================\n");
+    }
+    
+    private static String getStatusString(Entity entity) {
+        List<String> statuses = new ArrayList<>();
+        if (entity.isPoisoned) statuses.add("Poison");
+        if (entity.isSilenced) statuses.add("Silence");
+        if (entity.isParalyzed) statuses.add("Paralyze");
+        if (entity instanceof Player) {
+            Player p = (Player)entity;
+            if (p.hasProtect) statuses.add("Protect");
+            if (p.hasShell) statuses.add("Shell");
+        }
+        return statuses.isEmpty() ? "Normal" : String.join(", ", statuses);
     }
 
     // ================= PROMPT METHODS =================

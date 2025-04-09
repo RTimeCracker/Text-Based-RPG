@@ -4,19 +4,16 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Player extends Entity {
-    public int level;
     private int exp;
     private int expToNextLevel;
     public int money;
     public List<Item> inventory;
-    
     Zone zone;
     private int xPos = 0, yPos = 0;
     private static Random random = new Random();
 
     public Player(String name, int money, EntityClass playerClass) {
-        super(name , 0, 0, 0, 0, playerClass);
-        this.level = 1;
+        super(name, 0, 0, 0, 0, 0, 0, playerClass);
         this.exp = 0;
         this.expToNextLevel = 100;
         this.money = money;
@@ -28,29 +25,29 @@ public class Player extends Entity {
     private void initializeClassStats(EntityClass playerClass) {
         switch (playerClass) {
             case Warrior:
-                this.hp = 120;
-                this.atk = 15;
-                this.def = 10;
+                this.maxHp = 120; this.hp = maxHp;
+                this.atk = 15; this.matk = 5;
+                this.def = 10; this.mdef = 5;
+                this.maxMp = 30; this.mp = maxMp;
                 break;
             case Mage:
-                this.hp = 80;
-                this.atk = 20;
-                this.def = 5;
+                this.maxHp = 80; this.hp = maxHp;
+                this.atk = 5; this.matk = 20;
+                this.def = 5; this.mdef = 10;
+                this.maxMp = 100; this.mp = maxMp;
                 break;
             case Tank:
-                this.hp = 150;
-                this.atk = 8000;
-                this.def = 20;
+                this.maxHp = 150; this.hp = maxHp;
+                this.atk = 1000; this.matk = 0;
+                this.def = 20; this.mdef = 15;
+                this.maxMp = 20; this.mp = maxMp;
                 break;
             case Summoner:
-                this.hp = 90;
-                this.atk = 12;
-                this.def = 8;
+                this.maxHp = 90; this.hp = maxHp;
+                this.atk = 12; this.matk = 15;
+                this.def = 8; this.mdef = 10;
+                this.maxMp = 80; this.mp = maxMp;
                 break;
-            default:
-                this.hp = 100;
-                this.atk = 10;
-                this.def = 10;
         }
     }
 
@@ -73,7 +70,7 @@ public class Player extends Entity {
             case Mage:
                 return "Mage: A powerful spellcaster with high damage but low defense.";
             case Tank:
-                return "Tank: C H U N K Y.";
+                return "Tank: Extremely durable with high defense but low magic ability.";
             case Summoner:
                 return "Summoner: A versatile class that commands creatures to fight for them.";
             default:
@@ -81,39 +78,60 @@ public class Player extends Entity {
         }
     }
 
-    protected void levelUp() {
+    public void levelUp() {
         level++;
         exp -= expToNextLevel;
         expToNextLevel = (int)(expToNextLevel * 1.5);
         
-        int hpIncrease = 0, atkIncrease = 0, defIncrease = 0; 
+        int hpIncrease = 0, atkIncrease = 0, defIncrease = 0;
+        int matkIncrease = 0, mdefIncrease = 0, mpIncrease = 0;
         
         switch (entityClass) {
             case Warrior:
                 hpIncrease = 15;
                 atkIncrease = 2;
+                matkIncrease = 1;
                 defIncrease = 3;
+                mdefIncrease = 2;
+                mpIncrease = 5;
                 break;
             case Mage:
                 hpIncrease = 8;
-                atkIncrease = 5;
+                atkIncrease = 1;
+                matkIncrease = 5;
                 defIncrease = 1;
+                mdefIncrease = 3;
+                mpIncrease = 15;
                 break;
             case Tank:
-                hpIncrease = 12;
+                hpIncrease = 20;
                 atkIncrease = 1;
-                defIncrease = 7;
+                matkIncrease = 0;
+                defIncrease = 5;
+                mdefIncrease = 3;
+                mpIncrease = 3;
                 break;
             case Summoner:
                 hpIncrease = 10;
-                atkIncrease = 3;
+                atkIncrease = 1;
+                matkIncrease = 3;
                 defIncrease = 2;
+                mdefIncrease = 3;
+                mpIncrease = 10;
                 break;
         }
         
-        hp += hpIncrease;
+        maxHp += hpIncrease;
+        hp = maxHp;
         atk += atkIncrease;
+        matk += matkIncrease;
         def += defIncrease;
+        mdef += mdefIncrease;
+        maxMp += mpIncrease;
+        mp = maxMp;
+        
+        cureAll();
+        removeBuffs();
         
         App.displayLevelUp(name, level, hpIncrease, atkIncrease, defIncrease);
     }
@@ -139,14 +157,6 @@ public class Player extends Entity {
         }
     }
 
-    public int getExp() {
-        return exp;
-    }
-
-    public int getExpToNextLevel() {
-        return expToNextLevel;
-    }
-
     public void addExp(int amount) {
         this.exp += amount;
         App.displayExpGained(amount);
@@ -154,11 +164,6 @@ public class Player extends Entity {
         if (this.exp >= this.expToNextLevel) {
             levelUp();
         }
-    }
-
-    public void useItem(Item item) {
-        item.use(this);
-        inventory.remove(item);
     }
 
     public void addItemToInventory(Item item) {
@@ -173,7 +178,19 @@ public class Player extends Entity {
         int choice = App.getIntInput("\nSelect an item to use (0 to cancel): ", 0, inventory.size());
         
         if (choice > 0 && choice <= inventory.size()) {
-            useItem(inventory.get(choice - 1));
+            Item selected = inventory.get(choice - 1);
+            
+            if (selected.hpRestore > 0 || selected.mpRestore > 0 || selected.isRevive ||  
+                selected.grantsProtect || selected.grantsShell || selected.atkBoost > 0 || 
+                selected.matkBoost > 0) {
+                selected.use(this);
+                inventory.remove(selected);
+            } else if (selected.inflictsPoison || selected.inflictsSilence || selected.inflictsParalyze) {
+                // Handle enemy-targeted items
+            } else if (selected.curesPoison || selected.curesSilence || selected.curesParalyze || selected.isRemedy) {
+                selected.cure(this);
+                inventory.remove(selected);
+            }
         }
     }
 }

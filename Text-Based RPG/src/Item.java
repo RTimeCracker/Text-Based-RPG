@@ -1,154 +1,255 @@
 public class Item {
     String name;
     String description;
-    int healingAmount;
-    int buffAmount;
-    int hybridAmount;
-    int manaAmount;
-    int debuffAmount;
-    int ailmentAmount;
+    int hpRestore;
+    int mpRestore;
+    boolean isRevive;
+    int reviveAmount;
+    boolean grantsProtect;
+    boolean grantsShell;
+    int atkBoost;
+    int matkBoost;
+    boolean inflictsPoison;
+    boolean inflictsSilence;
+    boolean inflictsParalyze;
+    boolean curesPoison;
+    boolean curesSilence;
+    boolean curesParalyze;
+    boolean isRemedy;
 
-
-    public Item(String name, String description, int healingAmount, int buffAmount, int hybridAmount, int manaAmount, int debuffAmount, int ailmentAmount) {
+    public Item(String name, String description, int hpRestore, int mpRestore, 
+                boolean isRevive, int reviveAmount, boolean grantsProtect, 
+                boolean grantsShell, int atkBoost, int matkBoost, 
+                boolean inflictsPoison, boolean inflictsSilence, 
+                boolean inflictsParalyze, boolean curesPoison, 
+                boolean curesSilence, boolean curesParalyze, boolean isRemedy) {
         this.name = name;
         this.description = description;
-        this.healingAmount = healingAmount;
-        this.buffAmount = buffAmount;
-        this.hybridAmount = hybridAmount;
-        this.manaAmount = manaAmount;
-        this.debuffAmount = debuffAmount;   
-        this.ailmentAmount = ailmentAmount;
-
+        this.hpRestore = hpRestore;
+        this.mpRestore = mpRestore;
+        this.isRevive = isRevive;
+        this.reviveAmount = reviveAmount;
+        this.grantsProtect = grantsProtect;
+        this.grantsShell = grantsShell;
+        this.atkBoost = atkBoost;
+        this.matkBoost = matkBoost;
+        this.inflictsPoison = inflictsPoison;
+        this.inflictsSilence = inflictsSilence;
+        this.inflictsParalyze = inflictsParalyze;
+        this.curesPoison = curesPoison;
+        this.curesSilence = curesSilence;
+        this.curesParalyze = curesParalyze;
+        this.isRemedy = isRemedy;
     }
 
-    public class Potion{
-
+    public void use(Player player) {
+        if (hpRestore > 0) {
+            player.hp = Math.min(player.hp + hpRestore, player.getMaxHp());
+            App.displayItemUsed(name, "restored HP by", hpRestore);
+        }
+        if (mpRestore > 0) {
+            player.mp = Math.min(player.mp + mpRestore, player.getMaxMp());
+            App.displayItemUsed(name, "restored MP by", mpRestore);
+        }
+        if (isRevive && player.hp <= 0) {
+            player.hp = reviveAmount;
+            App.displayItemUsed(name, "revived with", reviveAmount);
+        }
+        if (grantsProtect) {
+            player.hasProtect = true;
+            App.displayItemUsed(name, "granted Protect (reduces physical damage)", 0);
+        }
+        if (grantsShell) {
+            player.hasShell = true;
+            App.displayItemUsed(name, "granted Shell (reduces magic damage)", 0);
+        }
+        if (atkBoost > 0) {
+            player.atk += atkBoost;
+            App.displayItemUsed(name, "increased Attack by", atkBoost);
+        }
+        if (matkBoost > 0) {
+            player.matk += matkBoost;
+            App.displayItemUsed(name, "increased Magic Power by", matkBoost);
+        }
     }
 
-    public void use(Player player) { 
-        player.hp += healingAmount;
-        player.mp += manaAmount;
-        player.atk += buffAmount;
-        player.def += debuffAmount;
-        player.atk += ailmentAmount;
-        player.hp += hybridAmount;
-        player.mp += hybridAmount;
+    public void useOnEnemy(Enemy enemy) {
+        if (inflictsPoison) {
+            enemy.isPoisoned = true;
+            App.displayItemUsed(name, "inflicted Poison on enemy", 0);
+        }
+        if (inflictsSilence) {
+            enemy.isSilenced = true;
+            App.displayItemUsed(name, "inflicted Silence on enemy", 0);
+        }
+        if (inflictsParalyze) {
+            enemy.isParalyzed = true;
+            App.displayItemUsed(name, "inflicted Paralyze on enemy", 0);
+        }
+    }
 
-        System.out.println("Using " + name + ": " + description);
-        if (healingAmount > 0) System.out.println("It heals " + healingAmount + " HP!");
-        if (manaAmount > 0) System.out.println("It restores " + manaAmount + " MP!");
-        if (buffAmount > 0) System.out.println("It buffs attack by " + buffAmount + "!");
-        if (debuffAmount > 0) System.out.println("It debuffs defense by " + debuffAmount + "!");
-        if (ailmentAmount > 0) System.out.println("It applies an ailment effect of " + ailmentAmount + "!");
-        if (hybridAmount > 0) System.out.println("It restores " + hybridAmount + " HP & MP!");
+    public void cure(Player player) {
+        if (curesPoison) {
+            player.isPoisoned = false;
+            App.displayItemUsed(name, "cured Poison", 0);
+        }
+        if (curesSilence) {
+            player.isSilenced = false;
+            App.displayItemUsed(name, "cured Silence", 0);
+        }
+        if (curesParalyze) {
+            player.isParalyzed = false;
+            App.displayItemUsed(name, "cured Paralyze", 0);
+        }
+        if (isRemedy) {
+            player.isPoisoned = false;
+            player.isSilenced = false;
+            player.isParalyzed = false;
+            App.displayItemUsed(name, "cured all status effects", 0);
+        }
     }
 
     // Healing Potions
-    public static Item superPotion(){
-        return new  Item ("Super Potion", "Heals for a greater amount.", 100, 0, 0, 0, 0, 0);
+    public static class HealingPotion {
+        public static Item potion() {
+            return new Item("Potion", "Restores 50 HP.", 50, 0, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          false, false, false, false);
+        }
+
+        public static Item superPotion() {
+            return new Item("Super Potion", "Restores 150 HP.", 150, 0, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          false, false, false, false);
+        }
+
+        public static Item maxPotion() {
+            return new Item("Max Potion", "Restores 250 HP.", 250, 0, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          false, false, false, false);
+        }
+
+        public static Item phoenixDown() {
+            return new Item("Phoenix Down", "Revives a KO'd unit with 10 HP.", 0, 0, 
+                          true, 10, false, false, 0, 0, false, false, false, 
+                          false, false, false, false);
+        }
     }
-
-    public static Item maxPotion(){
-        return new Item ("Max Potion", "Heals for a max amount.", 200 , 0, 0, 0, 0, 0);
-    }
-
-    public static Item PhoenixDownPotion(){
-        return new Item("Phoenix Down Potion", "Revives a KO'd unit with 10 HP.", 10 , 0, 0, 0, 0, 0);
-    } 
-
 
     // Mana Potions
-    public static Item LowlyFlaskofTears(){
-        return new Item("Lowly Flask of Tears", "Restores 20 MP.", 0, 0, 0, 20, 0, 0);
-    }
+    public static class ManaPotion {
+        public static Item lowlyFlask() {
+            return new Item("Lowly Flask of Tears", "Restores 20 MP.", 0, 20, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          false, false, false, false);
+        }
 
-    public static Item GreatFlaskofDemiGodTears(){
-        return new Item("Great Flask of DemiGod Tears", "Restores 70 MP.", 0 , 0, 0, 70, 0, 0);
-    }
+        public static Item greatFlask() {
+            return new Item("Great Flask of DemiGod Tears", "Restores 70 MP.", 0, 70, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          false, false, false, false);
+        }
 
-    public static Item AbsoluteFlaskofGodTears(){
-        return new Item("Absolute Flask of God Tears", "Restores 150 MP.", 0, 0, 0, 150, 0, 0);
-    }
-
-
-    // Buff Potions
-    public static Item ProtectPotion(){
-        return new Item("Protect Potion", "Casts Protect (reduces physical damage).", 0 , 50, 0, 0, 0, 0);
-    }
-
-    public static Item ShellPotion(){
-        return new Item("Shell Potion", "Casts Shell (reduces magic damage).", 0, 50, 0, 0, 0, 0);
-    }
-
-    public static Item PowerJuice(){
-        return new Item("Power Juice", "Casts Boost (increase attack).", 0, 50, 0, 0, 0, 0);
-    }
-
-    public static Item MindJuice(){
-        return new Item("Mind Juice", "Casts Boost (increase magic power).", 0 , 50, 0, 0, 0, 0);
-    }
-
-
-    // Debuff Potions
-    public static Item Poison(){
-        return new Item("Poison", "Inflicts Poison (HP drains over time).", 0, 0, 0, 0, 50, 0);
-    }
-
-    public static Item NightShade(){
-        return new Item ("Night Shade", "Inflicts Sleep (unable to act).", 0 , 0, 0, 0, 50, 0);
-    }
-
-    public static Item BlindWeed(){
-        return new Item("Blind Weed", "Inflicts Blind (lowers accuracy).", 0 , 0, 0, 0, 50, 0);
-    }
-
-    public static Item SilenceDust(){
-        return new Item("Silence Dust", "Inflicts Silence(prevents spellcasting).", 0 , 0, 0, 0, 50, 0);
-    }
-
-    public static Item ParalyzeDust(){
-        return new Item("Paralyze Dust", "Inflicts Stop(stops all movement/actions)",  0 , 0, 0, 0, 50, 0);
-    }
-
-    public static Item ConfusionDust(){
-        return new Item ("Confusion Dust", "Inflicts Confusion (randomly attacks allies/enemies).", 0, 0, 0, 0, 50, 0);
-    }
-    public static Item CharmDust(){
-        return new Item("Charm Dust", "Inflicts Charm (makes the unit fight for the enemy).", 0, 0, 0, 0, 50, 0);
-    }
-
-    // Ailment Potions
-    public static Item Antidote(){
-        return new Item("Antidote", "Cures Poison.", 0, 0, 0, 0, 0, 50);
-    }
-
-    public static Item EyeDrops(){
-        return new Item("EyeDrops", "Cures Blind.", 0, 0, 0, 0, 0, 50);
-    }
-
-    public static Item EchoGrass(){
-        return new Item("Echo Grass", "Cures Silence.", 0, 0, 0, 0, 0, 50);
-    }
-
-    public static Item HolyWater(){
-        return new Item ("Holy Water", "Cures Zombie and Curse.", 0, 0, 0, 0, 0, 50);
-    }
-
-    public static Item Remedy(){
-        return new Item ("Remedy", "Cures most status effects (except Doom and Charm).", 0, 0, 0, 0, 0, 50);
+        public static Item absoluteFlask() {
+            return new Item("Absolute Flask of God Tears", "Restores 150 MP.", 0, 150, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          false, false, false, false);
+        }
     }
 
     // Hybrid Potions
-    public static Item LesserGradePotion(){
-        return new Item("Lesser Grade Elixir", "Restores for a good amount of HP and MP.", 0, 0, 50, 0, 0, 0);
+    public static class HybridPotion {
+        public static Item lesserElixir() {
+            return new Item("Lesser Grade Elixir", "Restores HP and MP.", 50, 50, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          false, false, false, false);
+        }
+
+        public static Item midElixir() {
+            return new Item("Mid Grade Elixir", "Restores more HP and MP.", 100, 100, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          false, false, false, false);
+        }
+
+        public static Item highElixir() {
+            return new Item("High Grade Elixir", "Restores max HP and MP.", 200, 200, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          false, false, false, false);
+        }
     }
 
-    public static Item MidGradePotion(){
-        return new Item("Mid Elixir Potion", "Restores for a greater amount of HP and MP.", 0, 0, 100, 0, 0, 0);
+    // Buff Potions
+    public static class BuffPotion {
+        public static Item protectPotion() {
+            return new Item("Protect Potion", "Reduces physical damage.", 0, 0, false, 0, 
+                          true, false, 0, 0, false, false, false, 
+                          false, false, false, false);
+        }
+
+        public static Item shellPotion() {
+            return new Item("Shell Potion", "Reduces magic damage.", 0, 0, false, 0, 
+                          false, true, 0, 0, false, false, false, 
+                          false, false, false, false);
+        }
+
+        public static Item powerJuice() {
+            return new Item("Power Juice", "Increases Attack.", 0, 0, false, 0, 
+                          false, false, 30, 0, false, false, false, 
+                          false, false, false, false);
+        }
+
+        public static Item mindJuice() {
+            return new Item("Mind Juice", "Increases Magic Power.", 0, 0, false, 0, 
+                          false, false, 0, 30, false, false, false, 
+                          false, false, false, false);
+        }
     }
 
-    public static Item HighGradePotion(){
-        return new Item("High Elixir Potion", "Restores for a max amount of HP and MP.", 0, 0, 200, 0, 0, 0);
+    // Debuff Potions
+    public static class DebuffPotion {
+        public static Item poison() {
+            return new Item("Poison", "Inflicts HP drain over time.", 0, 0, false, 0, 
+                          false, false, 0, 0, true, false, false, 
+                          false, false, false, false);
+        }
+
+        public static Item silenceDust() {
+            return new Item("Silence Dust", "Prevents spellcasting.", 0, 0, false, 0, 
+                          false, false, 0, 0, false, true, false, 
+                          false, false, false, false);
+        }
+
+        public static Item paralyzeDust() {
+            return new Item("Paralyze Dust", "Stops all movement/actions.", 0, 0, false, 0, 
+                          false, false, 0, 0, false, false, true, 
+                          false, false, false, false);
+        }
     }
 
+    // Cure Items
+    public static class CureItem {
+        public static Item antidote() {
+            return new Item("Antidote", "Cures Poison.", 0, 0, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          true, false, false, false);
+        }
+
+        public static Item echoGrass() {
+            return new Item("Echo Grass", "Cures Silence.", 0, 0, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          false, true, false, false);
+        }
+
+        public static Item paralyzeHeal() {
+            return new Item("Paralyze Heal", "Cures Paralysis.", 0, 0, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          false, false, true, false);
+        }
+
+        public static Item remedy() {
+            return new Item("Remedy", "Cures most status effects.", 0, 0, false, 0, 
+                          false, false, 0, 0, false, false, false, 
+                          true, true, true, true);
+        }
+    }
 }
