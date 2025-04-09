@@ -44,12 +44,10 @@ public class MainFrame extends JFrame{
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        initMainMenu(this, mainPanel, cardLayout);
-        initIntroductionInterface(this, mainPanel, cardLayout);
+        initMainMenu();
+        initIntroductionInterface();
+        initExplorationInterface();
         
-        while (player != null) { 
-            System.out.println(player.name);
-        }
     }
 
     public void updateGameState(GameState gameState){
@@ -66,12 +64,12 @@ public class MainFrame extends JFrame{
         }
     }
     
-    private void initMainMenu(MainFrame frame, JPanel mainPanel, CardLayout cardLayout) throws IOException{
-        MainMenuPanel mainMenuPanel = new MainMenuPanel(frame, mainPanel, cardLayout);
+    private void initMainMenu() throws IOException{
+        MainMenuPanel mainMenuPanel = new MainMenuPanel(this, mainPanel, cardLayout);
         
     }
 
-    private void initIntroductionInterface(JFrame frame, JPanel mainPanel, CardLayout cardLayout){
+    private void initIntroductionInterface(){
         IntroductionClickablePanel introductionPanel = new IntroductionClickablePanel(cardLayout, mainPanel, this);
         
 
@@ -86,9 +84,17 @@ public class MainFrame extends JFrame{
         introductionLabel.setVerticalAlignment(SwingConstants.TOP);
 
         //Add panels to both frame and cardLayout
-        frame.add(introductionPanel);
+        this.add(introductionPanel);
         mainPanel.add(introductionPanel, "IntroductionPanel");
         introductionPanel.add(introductionLabel);
+    }
+
+    private void initExplorationInterface() throws IOException{
+        ExplorationPanel explorationPanel = new ExplorationPanel(this);
+
+        this.add(explorationPanel);
+        mainPanel.add(explorationPanel, "ExplorationPanel");
+
     }
 
     public void initPlayer(String inputtedName, int classChosen){

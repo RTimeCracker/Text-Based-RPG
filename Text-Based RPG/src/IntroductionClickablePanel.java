@@ -58,7 +58,7 @@ public class IntroductionClickablePanel extends JPanel implements MouseListener{
         //show next cardlayout.
         frame.initPlayer(inputtedName, classChosen);
         frame.updateGameState(MainFrame.GameState.Game);
-        cardLayout.show(mainPanel, "");
+        cardLayout.show(mainPanel, "ExplorationPanel");
     }
 
     private void onClassesButtonClick(JButton[] buttons, JPanel classesPanel, int classChoice){

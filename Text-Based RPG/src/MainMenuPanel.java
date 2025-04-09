@@ -22,11 +22,14 @@ public class MainMenuPanel extends JPanel{
         frame.add(backgroundPanel);
         backgroundPanel.add(this);
 
-        JLabel titleLabel = new JLabel("<html>Vaiken: <br/>----Last Legacy----</html>");
-        titleLabel.setFont(new Font("Roboto",Font.BOLD,60));
+        ImageIcon titleIcon = new ImageIcon(new ImageIcon("Text-Based RPG\\Images\\VaikenLogo.png").getImage().getScaledInstance(700, 650, Image.SCALE_SMOOTH));
+        
+        JLabel titleLabel = new JLabel();
         titleLabel.setForeground(Color.BLACK);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setBorder(new EmptyBorder(100,0,0,0));
+        titleLabel.setBorder(new EmptyBorder(-150,0,0,0));
+        titleLabel.setSize(10,10);
+        titleLabel.setIcon(titleIcon);
         
         this.add(titleLabel, BorderLayout.NORTH);
 

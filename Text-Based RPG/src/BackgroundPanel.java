@@ -8,7 +8,7 @@ public class BackgroundPanel extends JPanel {
     public BackgroundPanel(Image background)
     {
         this.background = background;
-        setLayout( new BorderLayout() );
+        
     }
  
     @Override
@@ -16,8 +16,8 @@ public class BackgroundPanel extends JPanel {
     {
         super.paintComponent(g);
  
-        g.drawImage(background, 0, 0, null); // image full size
-        //g.drawImage(background, 0, 0, getWidth(), getHeight(), null); // image scaled
+        //g.drawImage(background, 0, 0, null); // image full size
+        g.drawImage(background, 0, 0, getWidth(), getHeight(), null); // image scaled
     }
  
     @Override
