@@ -22,8 +22,11 @@ public class EncounterPanel extends JLayeredPane{
 
     JLabel labelDialogue;
 
-    String[] dialogueTexts;
-    int dialogueCount;
+    String[] playerDialogueTexts;
+    int playerDialogueCount;
+
+    String[] enemyDialogueTexts;
+    int enemyDialogueCount;
 
     CardLayout panelCardLayout = new CardLayout();
 
@@ -38,7 +41,6 @@ public class EncounterPanel extends JLayeredPane{
         this.setLayout(null);
 
         setPanelBox();
-        setBackground();
     }
 
     private void setPanelBox(){
@@ -59,7 +61,7 @@ public class EncounterPanel extends JLayeredPane{
         panelDialogue.setLayout(new FlowLayout(FlowLayout.LEFT));
         panelDialogue.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 onDialoguePanelClick();
             }
         });
@@ -113,24 +115,41 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     private void onDialoguePanelClick(){    
-        if(dialogueCount < dialogueTexts.length - 1){
-            labelDialogue.setText(dialogueTexts[dialogueCount]);
-            dialogueCount++;
+        if(playerDialogueCount <= playerDialogueTexts.length - 1){
+            labelDialogue.setText(playerDialogueTexts[playerDialogueCount]);
+            playerDialogueCount++;
         }else{
-            panelCardLayout.show(panelBox, "PanelOptions");
+            enemyTurn();
+            if(enemyDialogueCount <= enemyDialogueTexts.length - 1){
+                labelDialogue.setText(enemyDialogueTexts[enemyDialogueCount]);
+                enemyDialogueCount++;
+            }else{
+                panelCardLayout.show(panelBox, "PanelOptions");
+            }
         }
-    }
 
-    private void insertDialogue(String[] texts){
-        dialogueTexts = texts;
     }
 
     private void onAttackButtonClick(){
-        String[] texts = {"Attacked Enemy"};
-        insertDialogue(texts);
+        String[] playerAttackTexts = {"Attacked Enemy!"};
+        playerDialogueTexts = playerAttackTexts;
 
-        labelDialogue.setText(texts[0]);
+        labelDialogue.setText(playerAttackTexts[0]);
         player.attackCommand();
+        update();
+
+        playerDialogueCount = 1;
+        enemyDialogueCount = 0;
+        panelCardLayout.show(panelBox, "PanelDialogue");
+    }
+
+    private void enemyTurn(){
+        String[] enemyAttackTexts = {"Enemy Fought Back!"};
+        enemyDialogueTexts = enemyAttackTexts;
+
+        labelDialogue.setText(enemyAttackTexts[0]);
+        System.out.println("Enemy TUrn");
+        player.currentEnemy.attackCommand(player);
         update();
 
         panelCardLayout.show(panelBox, "PanelDialogue");
@@ -157,7 +176,7 @@ public class EncounterPanel extends JLayeredPane{
         
         try {
             BufferedImage menuBackgroundImage;
-            menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\\\Images\\\\Backgrounds\\\\BattleGround1.jpg"));
+            menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\Backgrounds\\BattleGround1.jpg"));
             System.out.println(player.zone.zoneType);
             if(player.zone.zoneType == ZoneType.Dungeon){
                 menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\Backgrounds\\Battleground4.jpg"));
@@ -179,9 +198,13 @@ public class EncounterPanel extends JLayeredPane{
         if(backgroundPanel != null && enemyLabel != null){
             this.remove(backgroundPanel);
             this.remove(enemyLabel);
+            this.revalidate();
+            this.repaint();
         }
+        panelCardLayout.show(panelBox, "PanelOptions");
         setBackground();
         setEnemy();
+        
     
     }
 
@@ -197,6 +220,7 @@ public class EncounterPanel extends JLayeredPane{
                 frame.updateGameState(MainFrame.GameState.Exploration);
             }
         }
-
     }
+
+    
 }

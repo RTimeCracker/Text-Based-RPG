@@ -197,7 +197,7 @@ public class Player extends Entity {
     }
 
     public void attackCommand(){
-        currentEnemy.takeDamage(atk);
+        currentEnemy.takeDamage(this.calculatePhysicalDamage(currentEnemy.def));
     }
 
     public void takeDamage(int damage){

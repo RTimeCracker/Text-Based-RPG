@@ -92,7 +92,7 @@ public abstract class Entity {
 
     // Combat Methods
     public int calculatePhysicalDamage(int enemyDef) {
-        return Math.max(1, this.atk - enemyDef / 2);
+        return Math.max(1, this.atk - (enemyDef / 2));
     }
     
     public int calculateMagicDamage(int enemyMdef) {

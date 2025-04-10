@@ -90,6 +90,6 @@ private static final List<Enemy> REGULAR_ENEMIES = List.of(
     }
 
     public void attackCommand(Player entity){
-        entity.takeDamage(atk);
+        entity.takeDamage(this.calculatePhysicalDamage(entity.def));
     }
 }
