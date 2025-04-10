@@ -8,12 +8,9 @@ import javax.swing.*;
 
 public class ExplorationPanel extends JLayeredPane{
     MainFrame frame;
-
     JButton[] directionButtons = new JButton[4];
     JLabel dialogueLabel = new JLabel();
-
     BackgroundPanel backgroundPanel;
-
     Player player;
 
     public ExplorationPanel(MainFrame frame, Player player) throws IOException{
@@ -38,16 +35,19 @@ public class ExplorationPanel extends JLayeredPane{
         this.add(dialogueLabel, Integer.valueOf(1));
     }
 
-    private void onButtonClick(int x, int y){
-        this.player.move(x,y);
-        if(player.zone.zoneType == ZoneType.Encounter || player.zone.zoneType == ZoneType.Dungeon){
+    private void onButtonClick(int x, int y) {
+        player.move(x, y);
+
+        if (player.zone != null && player.zone.zoneType == ZoneType.Village) {
+            frame.updateGameState(MainFrame.GameState.Village);
+        } else if (player.zone != null && player.zone.zoneType == ZoneType.Encounter) {
             player.currentEnemy = Enemy.generateRandom();
             frame.updateGameState(MainFrame.GameState.Encounter);
             frame.update();
         }
-        //either encounter, village or dungeon
+        rePaint();
     }
-
+    
     private void setButtons(){
 
         for (int i = 0; i < 4; i++) {

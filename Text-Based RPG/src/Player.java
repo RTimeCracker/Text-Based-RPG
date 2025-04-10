@@ -11,17 +11,23 @@ public class Player extends Entity {
     Zone zone;
     private int xPos = 0, yPos = 0;
     private static Random random = new Random();
+    private transient MainFrame frame;
 
     public Enemy currentEnemy;
 
-    public Player(String name, int money, EntityClass playerClass) {
+    public Player(String name, int money, EntityClass playerClass, MainFrame frame) {
         super(name, 0, 0, 0, 0, 0, 0, playerClass);
+        this.frame = frame;
         this.exp = 0;
         this.expToNextLevel = 100;
         this.money = money;
         this.inventory = new ArrayList<>();
         this.zone = new Zone(ZoneType.Village, 0, 0);
         initializeClassStats(playerClass);
+    }
+
+    public void setFrame(MainFrame frame) {
+        this.frame = frame;
     }
 
     private void initializeClassStats(EntityClass playerClass) {
@@ -53,17 +59,10 @@ public class Player extends Entity {
         }
     }
 
-
-    public static Player createPlayer(String name, int classChosen) {
-
-
+    public static Player createPlayer(String name, int classChosen, MainFrame frame) {
         EntityClass chosenClass = EntityClass.values()[classChosen];
-        
-
-        return new Player(name, 100, chosenClass);
-    }
-
-    
+        return new Player(name, 100, chosenClass, frame);
+    } 
 
     private static String getClassDescription(EntityClass playerClass) {
         switch (playerClass) {
@@ -142,6 +141,10 @@ public class Player extends Entity {
         this.xPos += dx;
         this.yPos += dy;
         changeZone();
+        
+        if (frame != null && zone != null && zone.zoneType == ZoneType.Village) {
+            frame.updateGameState(MainFrame.GameState.Village);
+        }
     }
 
     private void changeZone() {
