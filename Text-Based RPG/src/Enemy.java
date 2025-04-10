@@ -24,12 +24,17 @@ private static final List<Enemy> REGULAR_ENEMIES = List.of(
         this.itemDrop = itemDrop;
     }
 
+    public Enemy(Enemy enemy){
+        super(enemy.name, enemy.hp, enemy.atk, enemy.def, 0, enemy.matk, enemy.mdef, enemy.entityClass);
+        
+    }
+
     public static Enemy generateBoss() {
-        return BOSSES.get(rand.nextInt(BOSSES.size()));
+        return new Enemy(BOSSES.get(rand.nextInt(BOSSES.size())));
     }
 
     public static Enemy generateRandom() {
-        return REGULAR_ENEMIES.get(rand.nextInt(REGULAR_ENEMIES.size()));
+        return new Enemy(REGULAR_ENEMIES.get(rand.nextInt(REGULAR_ENEMIES.size())));
     }
 
     public void handleCombat(Player player, Scanner sc) {
@@ -78,5 +83,13 @@ private static final List<Enemy> REGULAR_ENEMIES = List.of(
             App.displayGameOver();
             System.exit(0);
         }
+    }
+
+    public void takeDamage(int damage){
+        this.hp -= damage;
+    }
+
+    public void attackCommand(Player entity){
+        entity.takeDamage(atk);
     }
 }

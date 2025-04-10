@@ -12,6 +12,8 @@ public class Player extends Entity {
     private int xPos = 0, yPos = 0;
     private static Random random = new Random();
 
+    public Enemy currentEnemy;
+
     public Player(String name, int money, EntityClass playerClass) {
         super(name, 0, 0, 0, 0, 0, 0, playerClass);
         this.exp = 0;
@@ -192,5 +194,13 @@ public class Player extends Entity {
                 inventory.remove(selected);
             }
         }
+    }
+
+    public void attackCommand(){
+        currentEnemy.takeDamage(atk);
+    }
+
+    public void takeDamage(int damage){
+        this.hp -= damage;
     }
 }

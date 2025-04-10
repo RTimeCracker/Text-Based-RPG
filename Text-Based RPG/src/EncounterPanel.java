@@ -39,7 +39,6 @@ public class EncounterPanel extends JLayeredPane{
 
         setPanelBox();
         setBackground();
-        setEnemy();
     }
 
     private void setPanelBox(){
@@ -75,12 +74,12 @@ public class EncounterPanel extends JLayeredPane{
         panelStatus.setBounds(3,3,372, 194);
         panelStatus.setLayout(new BoxLayout(panelStatus,BoxLayout.PAGE_AXIS));
 
-        HP = new JLabel("HP:");
+        HP = new JLabel("HP: " + player.hp);
         HP.setMaximumSize(new Dimension(200, 50));
         HP.setPreferredSize(new Dimension(200, 30));
         HP.setFont(new Font("Roboto",Font.BOLD,32));
 
-        LVL = new JLabel("LVL:");
+        LVL = new JLabel("LVL: " + player.level);
         LVL.setMaximumSize(new Dimension(200, 50));
         LVL.setPreferredSize(new Dimension(200, 30));
         LVL.setFont(new Font("Roboto",Font.BOLD,12));
@@ -131,12 +130,14 @@ public class EncounterPanel extends JLayeredPane{
         insertDialogue(texts);
 
         labelDialogue.setText(texts[0]);
+        player.attackCommand();
+        update();
 
         panelCardLayout.show(panelBox, "PanelDialogue");
     }
 
-    private void setEnemy(){
-        enemyLabel = new JLabel("<html><body style='text-align:center;'>HP:<br>ORIT THE ENEMY</body></html>");
+    public void setEnemy(){
+        enemyLabel = new JLabel("<html><body style='text-align:center;'>HP: "+ player.currentEnemy.hp +"<br>"+ player.currentEnemy.name +"</body></html>");
         enemyLabel.setBounds(275, 50, 250, 400);
         enemyLabel.setFont(new Font("Roboto",Font.BOLD,32));
         enemyLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -174,14 +175,28 @@ public class EncounterPanel extends JLayeredPane{
         }
     }
 
-    public void rePaint(){
-        this.remove(backgroundPanel);
-        this.remove(enemyLabel);
+    public void reSetup(){
+        if(backgroundPanel != null && enemyLabel != null){
+            this.remove(backgroundPanel);
+            this.remove(enemyLabel);
+        }
         setBackground();
         setEnemy();
+    
     }
 
     public void update(){
+        if(player.hp > 0 && player.currentEnemy.hp > 0){
+            HP.setText("HP: " + player.hp);
+            enemyLabel.setText("<html><body style='text-align:center;'>HP: "+ player.currentEnemy.hp +"<br>"+ player.currentEnemy.name +"</body></html>");
+        }else{
+            if(player.hp <= 0){
+
+            }else if(player.currentEnemy.hp <= 0){
+                reSetup();
+                frame.updateGameState(MainFrame.GameState.Exploration);
+            }
+        }
 
     }
 }

@@ -82,7 +82,7 @@ public class MainFrame extends JFrame{
         if(currentGameState == GameState.Exploration){
             explorationPanel.rePaint();
         }else if(currentGameState == GameState.Encounter){
-            encounterPanel.rePaint();
+            encounterPanel.reSetup();
         }
     }
     

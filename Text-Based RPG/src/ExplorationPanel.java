@@ -41,6 +41,7 @@ public class ExplorationPanel extends JLayeredPane{
     private void onButtonClick(int x, int y){
         this.player.move(x,y);
         if(player.zone.zoneType == ZoneType.Encounter || player.zone.zoneType == ZoneType.Dungeon){
+            player.currentEnemy = Enemy.generateRandom();
             frame.updateGameState(MainFrame.GameState.Encounter);
             frame.update();
         }
@@ -108,7 +109,6 @@ public class ExplorationPanel extends JLayeredPane{
 
     public void rePaint(){
         setBackground();
-
     }
 }
 
