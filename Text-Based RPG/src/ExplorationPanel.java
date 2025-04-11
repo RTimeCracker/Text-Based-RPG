@@ -40,7 +40,7 @@ public class ExplorationPanel extends JLayeredPane{
 
         if (player.zone != null && player.zone.zoneType == ZoneType.Village) {
             frame.updateGameState(MainFrame.GameState.Village);
-        } else if (player.zone != null && player.zone.zoneType == ZoneType.Encounter) {
+        } else if (player.zone.zoneType ==  ZoneType.Dungeon || player.zone.zoneType == ZoneType.Encounter) {
             player.currentEnemy = Enemy.generateRandom();
             frame.updateGameState(MainFrame.GameState.Encounter);
             frame.update();
@@ -92,7 +92,7 @@ public class ExplorationPanel extends JLayeredPane{
             menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\\\Images\\\\Backgrounds\\\\BattleGround1.jpg"));
             System.out.println(player.zone.zoneType);
             if(player.zone.zoneType == ZoneType.Dungeon){
-                menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\Backgrounds\\Battleground 4.jpg"));
+                menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\Backgrounds\\Battleground4.jpg"));
             }
             
             Image scaledImage = menuBackgroundImage.getScaledInstance(frame.SCREENWIDTH, frame.SCREENHEIGHT, Image.SCALE_SMOOTH);
