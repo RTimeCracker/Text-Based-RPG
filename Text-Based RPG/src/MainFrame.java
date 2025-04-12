@@ -12,7 +12,7 @@ public class MainFrame extends JFrame{
     final int SCREENHEIGHT = 700;
 
     public enum GameState{
-        MainMenu, Introduction, Exploration, Encounter
+        MainMenu, Introduction, Exploration, Encounter, Village
     }
 
     GameState currentGameState = GameState.MainMenu;
@@ -26,6 +26,7 @@ public class MainFrame extends JFrame{
     IntroductionClickablePanel introductionPanel;
     ExplorationPanel explorationPanel;
     EncounterPanel encounterPanel;
+    VillagePanel villagePanel;
 
     String[] introductionDialogues = {"Welcome Vaiken: Last Legacy", "A game where you can explore, fight enemies, and gather loot!", "classchoice", "namechoice"};
     
@@ -53,27 +54,26 @@ public class MainFrame extends JFrame{
         
     }
 
-    public void updateGameState(GameState gameState){
+    public void updateGameState(GameState gameState) {
         currentGameState = gameState;
-
-        if(null != currentGameState)switch (currentGameState) {
+        
+        switch (currentGameState) {
             case MainMenu:
                 System.out.println("Menu");
                 break;
-
             case Introduction:
                 switchPanel("IntroductionPanel");
                 StopMusic(menuMusicFile, menuClip);
                 break;
-
             case Exploration:
                 switchPanel("ExplorationPanel");
                 break;
-
             case Encounter:
                 switchPanel("EncounterPanel");
                 break;
-            default:
+            case Village:
+                villagePanel.updateGoldDisplay();
+                switchPanel("VillagePanel");
                 break;
         }
     }
@@ -100,9 +100,8 @@ public class MainFrame extends JFrame{
 
     public void initExplorationInterface() throws IOException{
         explorationPanel = new ExplorationPanel(this, player);
-
-        this.add(explorationPanel);
         mainPanel.add(explorationPanel, "ExplorationPanel");
+        player.setFrame(this);
 
     }
 
@@ -114,11 +113,17 @@ public class MainFrame extends JFrame{
     }
 
     public void initPlayer(String inputtedName, int classChosen){
-        this.player = Player.createPlayer(inputtedName, classChosen);
+        this.player = Player.createPlayer(inputtedName, classChosen, this);
+        this.player.setFrame(this);
     }
 
     private void switchPanel(String text){
         cardLayout.show(mainPanel, text);
+    } 
+
+    public void initVillageInterface() {
+        villagePanel = new VillagePanel(this, player);
+        mainPanel.add(villagePanel, "VillagePanel");
     }
 
     public static void PlayMusic(File musicPath, Clip clip){

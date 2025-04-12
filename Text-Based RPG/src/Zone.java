@@ -13,9 +13,10 @@ public class Zone {
     private static Random random = new Random();
     private Set<Integer> usedChoices = new HashSet<>();
     private Enemy lastEncounteredEnemy = null;
+    private MainFrame frame;
 
     // Sample items for shops
-    private static final List<Item> SHOP_ITEMS = List.of(
+    public static final List<Item> SHOP_ITEMS = List.of(
         Item.HealingPotion.potion(),
         Item.HealingPotion.superPotion(),
         Item.ManaPotion.lowlyFlask(),
@@ -202,7 +203,7 @@ public class Zone {
                         "You steal 75 gold!\n" +
                         "Suddenly, guards appear!"
                     );
-                    Enemy enemy = new Enemy(List.of(), "Town Guard Ryan", 120, 35, 15, 5, 10, EntityClass.Warrior);
+                    Enemy enemy = new Enemy(List.of(), "Town Guard Ryan", 120, 35, 15, 5, 10, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\TownGuard.png");
                     enemy.handleCombat(player, sc);
                     usedChoices.add(2);
                 });
@@ -297,17 +298,10 @@ public class Zone {
     }
 
     private void handleVillage(Player player, Scanner sc) {
-        App.displayVillageOptions();
-        int choice = getValidChoice(sc, 3);
-        
-        if (choice == 1) {
-            buyItems(player, sc);
-        } else if (choice == 2) {
-            sellItems(player, sc);
-        }
+        frame.updateGameState(MainFrame.GameState.Village);
     }
 
-    private void buyItems(Player player, Scanner sc) {
+    public void buyItems(Player player, Scanner sc) {
         App.displayShopItems(SHOP_ITEMS);
         
         int choice = getValidChoice(sc, SHOP_ITEMS.size() + 1);

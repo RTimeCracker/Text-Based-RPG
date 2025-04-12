@@ -64,16 +64,16 @@ public class IntroductionClickablePanel extends JPanel implements MouseListener{
 
     private void onSubmitButtonClick(JButton button, JTextField nameInput){
         inputtedName = nameInput.getText();
-        //show next cardlayout.
-        frame.initPlayer(inputtedName, classChosen);
+    frame.initPlayer(inputtedName, classChosen);
+    try {
+        frame.initExplorationInterface();
+        frame.initEncounterPanel();
+        frame.initVillageInterface();  // Make sure village panel is initialized
         frame.updateGameState(MainFrame.GameState.Exploration);
-        try {
-            frame.initExplorationInterface();
-            frame.initEncounterPanel();
-        } catch (IOException ex) {
-        }
-        frame.updateGameState(MainFrame.GameState.Exploration);
+    } catch (IOException ex) {
+        ex.printStackTrace();
     }
+}
 
     private void onClassesButtonClick(JButton[] buttons, JPanel classesPanel, int classChoice){
         classChosen = classChoice;

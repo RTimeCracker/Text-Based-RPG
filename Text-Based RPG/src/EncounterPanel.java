@@ -187,10 +187,6 @@ public class EncounterPanel extends JLayeredPane{
         enemyLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         enemyLabel.setVerticalAlignment(JLabel.BOTTOM);
         enemyLabel.setForeground(Color.BLACK);
-
-        enemyImage = new ImageIcon((new ImageIcon("Text-Based RPG\\Images\\Enemy\\OritEnemy.png").getImage()).getScaledInstance(250, 250,Image.SCALE_SMOOTH));
-        
-        enemyLabel.setIcon(enemyImage);
         this.add(enemyLabel,Integer.valueOf(1));
 
     }
