@@ -17,10 +17,13 @@ public class EncounterPanel extends JLayeredPane{
     JPanel panelBox;
     JPanel panelOptions;
     JPanel panelDialogue;
+    JPanel panelInventory;
+    JScrollPane panelInventoryContents;
     JPanel panelStatus;
     JPanel panelCommands;
 
     JLabel labelDialogue;
+    JLabel[] labelInventory;
 
     String[] playerDialogueTexts;
     int playerDialogueCount;
@@ -44,6 +47,7 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     private void setPanelBox(){
+        //=====Panel Box======
         Border panelBorder = BorderFactory.createLineBorder(Color.BLACK,3);
         panelBox = new JPanel();
         panelBox.setBounds(25,450,750,200);
@@ -70,6 +74,16 @@ public class EncounterPanel extends JLayeredPane{
         labelDialogue.setFont(new Font("Roboto",Font.BOLD,32));
 
         panelDialogue.add(labelDialogue);
+
+
+        //=====Panel Inventory======
+        panelInventory = new JPanel();
+        panelInventory.setBounds(25,450,750,200);
+
+        panelInventoryContents = new JScrollPane();
+        panelInventoryContents.setBounds(25,450,543,200);
+        //panelInventoryContents.setLayout(new BoxLayout(panelInventoryContents, BoxLayout.PAGE_AXIS));
+        panelInventoryContents.add(panelInventory);
 
         panelStatus = new JPanel();   
         panelStatus.setOpaque(false);        
@@ -100,6 +114,7 @@ public class EncounterPanel extends JLayeredPane{
         JButton Inventory = new JButton("Inventory");
 
         AttackButton.addActionListener(e -> onAttackButtonClick());
+        Inventory.addActionListener(e -> onInventoryButtonClick());
         
         panelCommands.add(AttackButton);
         panelCommands.add(Inventory);
@@ -109,7 +124,9 @@ public class EncounterPanel extends JLayeredPane{
 
         panelBox.add(panelOptions, "PanelOptions");        
         panelCardLayout.show(panelBox, "PanelOptions");
+
         panelBox.add(panelDialogue, "PanelDialogue");
+        panelBox.add(panelInventory, "PanelInventory");
 
         this.add(panelBox, Integer.valueOf(1));
     }
@@ -153,6 +170,12 @@ public class EncounterPanel extends JLayeredPane{
         update();
 
         panelCardLayout.show(panelBox, "PanelDialogue");
+    }
+
+    private void onInventoryButtonClick(){
+
+
+        panelCardLayout.show(panelBox, "PanelInventory");
     }
 
     public void setEnemy() {
@@ -259,7 +282,7 @@ public class EncounterPanel extends JLayeredPane{
             enemyLabel.setText("<html><body style='text-align:center;'>HP: "+ player.currentEnemy.hp +"<br>"+ player.currentEnemy.name +"</body></html>");
         }else{
             if(player.hp <= 0){
-
+                System.exit(0);
             }else if(player.currentEnemy.hp <= 0){
                 reSetup();
                 frame.updateGameState(MainFrame.GameState.Exploration);
