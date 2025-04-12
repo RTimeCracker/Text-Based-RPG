@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -7,9 +8,11 @@ public class Player extends Entity {
     private int exp;
     private int expToNextLevel;
     public int money;
-    public List<Item> inventory;
+    public List<Item> inventory = new ArrayList<>(Arrays.asList(
+        Item.HealingPotion.maxPotion(), Item.BuffPotion.mindJuice(), Item.HealingPotion.phoenixDown(), Item.DebuffPotion.poison()
+    ));
     Zone zone;
-    private int xPos = 0, yPos = 0;
+    public int xPos = 0, yPos = 0;
     private static Random random = new Random();
     private transient MainFrame frame;
 
@@ -21,7 +24,7 @@ public class Player extends Entity {
         this.exp = 0;
         this.expToNextLevel = 100;
         this.money = money;
-        this.inventory = new ArrayList<>();
+        //this.inventory = new ArrayList<>();
         this.zone = new Zone(ZoneType.Village, 0, 0);
         initializeClassStats(playerClass);
     }
@@ -205,5 +208,9 @@ public class Player extends Entity {
 
     public void takeDamage(int damage){
         this.hp -= damage;
+    }
+
+    public void useItem(Item item){
+        item.use(this);
     }
 }

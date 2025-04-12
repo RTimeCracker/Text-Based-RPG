@@ -142,6 +142,10 @@ private static final List<Enemy> REGULAR_ENEMIES = List.of(
         this.hp -= damage;
     }
 
+    public void Death(Player player){
+        player.addExp(50);
+    }
+
     public void attackCommand(Player entity){
         entity.takeDamage(this.calculatePhysicalDamage(entity.def));
     }

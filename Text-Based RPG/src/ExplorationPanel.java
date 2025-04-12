@@ -10,6 +10,7 @@ public class ExplorationPanel extends JLayeredPane{
     MainFrame frame;
     JButton[] directionButtons = new JButton[4];
     JLabel dialogueLabel = new JLabel();
+    JLabel coordinatesLabel = new JLabel();
     BackgroundPanel backgroundPanel;
     Player player;
 
@@ -22,6 +23,7 @@ public class ExplorationPanel extends JLayeredPane{
         setBackground();
         setButtons();
         setDialogue();
+        setCoordinates();
     }
 
     private void setDialogue(){
@@ -33,6 +35,17 @@ public class ExplorationPanel extends JLayeredPane{
         dialogueLabel.setVerticalAlignment(JLabel.TOP);
 
         this.add(dialogueLabel, Integer.valueOf(1));
+    }
+
+    private void setCoordinates(){
+        coordinatesLabel.setText("X: " + player.xPos + " Y: " + player.yPos);
+        coordinatesLabel.setBounds(0, 0, 200 ,100);
+        coordinatesLabel.setFont(new Font("Roboto",Font.BOLD,32));
+        coordinatesLabel.setForeground(Color.WHITE);
+        coordinatesLabel.setHorizontalAlignment(JLabel.LEFT);
+        coordinatesLabel.setVerticalAlignment(JLabel.TOP);
+
+        this.add(coordinatesLabel, Integer.valueOf(1));
     }
 
     private void onButtonClick(int x, int y) {
@@ -109,6 +122,7 @@ public class ExplorationPanel extends JLayeredPane{
 
     public void rePaint(){
         setBackground();
+        coordinatesLabel.setText("X: " + player.xPos + " Y: " + player.yPos);
     }
 }
 

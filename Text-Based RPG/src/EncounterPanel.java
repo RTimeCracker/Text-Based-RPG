@@ -18,12 +18,16 @@ public class EncounterPanel extends JLayeredPane{
     JPanel panelOptions;
     JPanel panelDialogue;
     JPanel panelInventory;
-    JScrollPane panelInventoryContents;
+    JPanel panelInventoryContents;
     JPanel panelStatus;
     JPanel panelCommands;
+    JPanel inventoryCommands;
 
     JLabel labelDialogue;
-    JLabel[] labelInventory;
+
+    Item selectedItem;
+
+    JScrollPane scrollPaneInventoryContents;
 
     String[] playerDialogueTexts;
     int playerDialogueCount;
@@ -75,16 +79,6 @@ public class EncounterPanel extends JLayeredPane{
 
         panelDialogue.add(labelDialogue);
 
-
-        //=====Panel Inventory======
-        panelInventory = new JPanel();
-        panelInventory.setBounds(25,450,750,200);
-
-        panelInventoryContents = new JScrollPane();
-        panelInventoryContents.setBounds(25,450,543,200);
-        //panelInventoryContents.setLayout(new BoxLayout(panelInventoryContents, BoxLayout.PAGE_AXIS));
-        panelInventoryContents.add(panelInventory);
-
         panelStatus = new JPanel();   
         panelStatus.setOpaque(false);        
         panelStatus.setBounds(3,3,372, 194);
@@ -110,17 +104,48 @@ public class EncounterPanel extends JLayeredPane{
         panelCommands.setBounds(375,3,372, 194);
         panelCommands.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
-        JButton AttackButton = new JButton("Attack");
-        JButton Inventory = new JButton("Inventory");
+        JButton attackButton = new JButton("Attack");
+        JButton skillsButton = new JButton("Skills");
+        JButton inventory = new JButton("Inventory");
 
-        AttackButton.addActionListener(e -> onAttackButtonClick());
-        Inventory.addActionListener(e -> onInventoryButtonClick());
+        attackButton.addActionListener(e -> onAttackButtonClick());
+        skillsButton.addActionListener(e -> onSkillsButtonClick());
+        inventory.addActionListener(e -> onInventoryButtonClick());
         
-        panelCommands.add(AttackButton);
-        panelCommands.add(Inventory);
+        panelCommands.add(attackButton);
+        panelCommands.add(skillsButton);
+        panelCommands.add(inventory);
 
         panelOptions.add(panelStatus);
         panelOptions.add(panelCommands);
+
+        //=====Panel Inventory======
+        panelInventory = new JPanel();
+        panelInventory.setBounds(0,0,750,200);
+        panelInventory.setLayout(null);
+        
+        panelInventoryContents = new JPanel();
+    
+        panelInventoryContents.setLayout(new BoxLayout(panelInventoryContents,BoxLayout.PAGE_AXIS));
+        scrollPaneInventoryContents = new JScrollPane(panelInventoryContents);
+        scrollPaneInventoryContents.setBounds(10,10,533,180);
+        scrollPaneInventoryContents.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        panelInventory.add(scrollPaneInventoryContents);
+
+        inventoryCommands = new JPanel();
+        inventoryCommands.setOpaque(false);        
+        inventoryCommands.setBounds(568,3,157, 194);
+        inventoryCommands.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+
+        JButton useButton = new JButton("Use");
+        JButton exitButton = new JButton("Exit");
+
+        useButton.addActionListener(e -> onUseButtonClick());
+        exitButton.addActionListener(e -> onInventoryExitButtonClick());
+
+        inventoryCommands.add(useButton);
+        inventoryCommands.add(exitButton);
+        panelInventory.add(inventoryCommands);
 
         panelBox.add(panelOptions, "PanelOptions");        
         panelCardLayout.show(panelBox, "PanelOptions");
@@ -160,6 +185,10 @@ public class EncounterPanel extends JLayeredPane{
         panelCardLayout.show(panelBox, "PanelDialogue");
     }
 
+    private void onSkillsButtonClick(){
+
+    }
+
     private void enemyTurn(){
         String[] enemyAttackTexts = {"Enemy Fought Back!"};
         enemyDialogueTexts = enemyAttackTexts;
@@ -173,9 +202,53 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     private void onInventoryButtonClick(){
+        for(int i = 0; i <= player.inventory.size() -1; i++){
+            JButton button = new JButton("<html> <body> <span style='font-size: 24px'>" + player.inventory.get(i).name + " </span> <br> Amount: </body></html>");
+            final int buttonIndex = i;
+            //button.setContentAreaFilled(false);
+            //button.setBorderPainted(false);
+            button.setOpaque(true);
+            button.setForeground(Color.BLACK);
+            button.setBackground(Color.white);
+            button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            button.setMaximumSize(new Dimension(500,100));
+            button.setPreferredSize(new Dimension(500,100));
+            button.setHorizontalAlignment(SwingConstants.LEFT);
 
+            button.addActionListener(e -> onItemButtonClick(buttonIndex));
+            panelInventoryContents.add(button);
+            if(i < player.inventory.size() -1){
+                panelInventoryContents.add(Box.createRigidArea(new Dimension(0,40)));
+            }
+        }
+        
 
         panelCardLayout.show(panelBox, "PanelInventory");
+    }
+
+    private void onItemButtonClick(int buttonIndex){
+        selectedItem = player.inventory.get(buttonIndex);
+    }
+
+    private void onUseButtonClick(){
+        if(selectedItem != null){
+            String[] playerItemTexts = {"Used " + selectedItem.name + "."};
+            playerDialogueTexts = playerItemTexts;
+    
+            labelDialogue.setText(playerItemTexts[0]);
+            update();
+    
+            playerDialogueCount = 1;
+            enemyDialogueCount = 0;
+            player.useItem(selectedItem);
+            selectedItem = null;
+            panelInventoryContents.removeAll();
+            panelCardLayout.show(panelBox, "PanelDialogue");
+        }
+    }
+
+    private void onInventoryExitButtonClick(){
+        panelCardLayout.show(panelBox, "PanelOptions");
     }
 
     public void setEnemy(){
@@ -235,6 +308,7 @@ public class EncounterPanel extends JLayeredPane{
             if(player.hp <= 0){
                 System.exit(0);
             }else if(player.currentEnemy.hp <= 0){
+                player.currentEnemy.Death(player);
                 reSetup();
                 frame.updateGameState(MainFrame.GameState.Exploration);
             }

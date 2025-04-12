@@ -45,32 +45,26 @@ public class Item {
     public void use(Player player) {
         if (hpRestore > 0) {
             player.hp = Math.min(player.hp + hpRestore, player.getMaxHp());
-            App.displayItemUsed(name, "restored HP by", hpRestore);
         }
         if (mpRestore > 0) {
             player.mp = Math.min(player.mp + mpRestore, player.getMaxMp());
-            App.displayItemUsed(name, "restored MP by", mpRestore);
         }
         if (isRevive && player.hp <= 0) {
             player.hp = reviveAmount;
-            App.displayItemUsed(name, "revived with", reviveAmount);
         }
         if (grantsProtect) {
             player.hasProtect = true;
-            App.displayItemUsed(name, "granted Protect (reduces physical damage)", 0);
         }
         if (grantsShell) {
             player.hasShell = true;
-            App.displayItemUsed(name, "granted Shell (reduces magic damage)", 0);
         }
         if (atkBoost > 0) {
             player.atk += atkBoost;
-            App.displayItemUsed(name, "increased Attack by", atkBoost);
         }
         if (matkBoost > 0) {
             player.matk += matkBoost;
-            App.displayItemUsed(name, "increased Magic Power by", matkBoost);
         }
+        player.inventory.remove(this);
     }
 
     public void useOnEnemy(Enemy enemy) {
