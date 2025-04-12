@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import javax.imageio.ImageIO;
 
@@ -36,41 +37,103 @@ private static final List<Enemy> REGULAR_ENEMIES = List.of(
     }
 
     private void loadEnemyImage(String imagePath) {
-        try {
-            BufferedImage img = null;
-            try {
-                img = ImageIO.read(getClass().getResourceAsStream(imagePath));
-            } catch (Exception e) {
-                if (!imagePath.startsWith("/")) {
-                    img = ImageIO.read(getClass().getResourceAsStream("/" + imagePath));
-                }
+    System.out.println("Attempting to load image: " + imagePath);
+    
+    try {
+        // Try multiple loading strategies
+        BufferedImage img = tryLoadImage(imagePath);
+        
+        if (img == null) {
+            System.err.println("All image loading attempts failed for: " + imagePath);
+            img = createPlaceholderImage();
+        }
+        
+        this.enemyImage = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+    } catch (Exception e) {
+        System.err.println("Critical error loading image: " + e.getMessage());
+        this.enemyImage = createPlaceholderImage();
+    }
+}
+
+private BufferedImage tryLoadImage(String path) {
+    // Try as resource
+    BufferedImage img = tryLoadResource(path);
+    if (img != null) return img;
+    
+    // Try as file
+    img = tryLoadFile(path);
+    if (img != null) return img;
+    
+    // Try alternative path formats
+    return tryAlternativePaths(path);
+}
+
+private BufferedImage tryLoadResource(String path) {
+    try {
+        // Remove leading slash if present for resource loading
+        String resourcePath = path.startsWith("/") ? path.substring(1) : path;
+        InputStream stream = getClass().getClassLoader().getResourceAsStream(resourcePath);
+        if (stream != null) {
+            BufferedImage img = ImageIO.read(stream);
+            if (img != null) {
+                System.out.println("Successfully loaded as resource: " + resourcePath);
+                return img;
             }
+        }
+    } catch (IOException e) {
+        System.err.println("Resource loading failed: " + path);
+    }
+    return null;
+}
+
+private BufferedImage tryLoadFile(String path) {
+    try {
+        File file = new File(path);
+        if (file.exists()) {
+            BufferedImage img = ImageIO.read(file);
+            if (img != null) {
+                System.out.println("Successfully loaded as file: " + path);
+                return img;
+            }
+        }
+    } catch (IOException e) {
+        System.err.println("File loading failed: " + path);
+    }
+    return null;
+}
+
+private BufferedImage tryAlternativePaths(String originalPath) {
+    // Try common alternative path formats
+    String[] alternatives = {
+        originalPath,
+        originalPath.replace("\\", "/"),
+        originalPath.replace("Text-Based RPG/", ""),
+        "images/" + originalPath.substring(originalPath.lastIndexOf("/") + 1),
+        "src/main/resources/" + originalPath
+    };
+    
+    for (String path : alternatives) {
+        if (!path.equals(originalPath)) {
+            BufferedImage img = tryLoadResource(path);
+            if (img != null) return img;
             
-            if (img == null) {
-                try {
-                    img = ImageIO.read(new File(imagePath));
-                } catch (IOException e) {
-                    System.err.println("Failed to load image from file: " + imagePath);
-                }
-            }
-
-            if (img == null) {
-                img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g2d = img.createGraphics();
-                g2d.setColor(Color.RED);
-                g2d.fillRect(0, 0, 200, 200);
-                g2d.setColor(Color.BLACK);
-                g2d.drawString("No Image", 50, 100);
-                g2d.dispose();
-                System.err.println("Created placeholder for missing image: " + imagePath);
-            }
-
-            this.enemyImage = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-        } catch (Exception e) {
-            System.err.println("Error loading enemy image: " + e.getMessage());
-            this.enemyImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+            img = tryLoadFile(path);
+            if (img != null) return img;
         }
     }
+    return null;
+}
+
+private BufferedImage createPlaceholderImage() {
+    BufferedImage img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g2d = img.createGraphics();
+    g2d.setColor(Color.RED);
+    g2d.fillRect(0, 0, 200, 200);
+    g2d.setColor(Color.BLACK);
+    g2d.drawString("Image Missing", 50, 100);
+    g2d.dispose();
+    return img;
+}
 
 
     public Image getEnemyImage() {
