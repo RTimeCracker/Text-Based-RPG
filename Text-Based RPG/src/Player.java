@@ -1,8 +1,13 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
 
 public class Player extends Entity {
     private int exp;
@@ -16,6 +21,9 @@ public class Player extends Entity {
     private static Random random = new Random();
     private transient MainFrame frame;
 
+    private File attackSFX = new File("Text-Based RPG\\SFX\\Attack.wav");
+    private Clip SFXClip;
+
     public Enemy currentEnemy;
 
     public Player(String name, int money, EntityClass playerClass, MainFrame frame) {
@@ -26,6 +34,10 @@ public class Player extends Entity {
         this.money = money;
         //this.inventory = new ArrayList<>();
         this.zone = new Zone(ZoneType.Village, 0, 0);
+        try {
+            SFXClip = AudioSystem.getClip();
+        } catch (LineUnavailableException ex) {
+        }
         initializeClassStats(playerClass);
     }
 
@@ -204,6 +216,7 @@ public class Player extends Entity {
 
     public void attackCommand(){
         currentEnemy.takeDamage(this.calculatePhysicalDamage(currentEnemy.def));
+        PlayMusic(attackSFX, SFXClip);
     }
 
     public void takeDamage(int damage){
@@ -212,5 +225,39 @@ public class Player extends Entity {
 
     public void useItem(Item item){
         item.use(this);
+    }
+
+    public static void PlayMusic(File musicPath, Clip clip){
+        try {
+
+            if(musicPath.exists()){
+                if(clip.isOpen()){
+                    clip.close();
+                }
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+
+                clip.open(audioInput);
+                clip.start();
+            }else{
+                System.out.println("Can't find file.");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public static void StopMusic(Clip clip){
+        try {
+            
+            if(clip != null){
+                if(clip.isOpen()){
+                    clip.stop();
+                }
+            }else{
+                System.out.println("Can't find file.");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }

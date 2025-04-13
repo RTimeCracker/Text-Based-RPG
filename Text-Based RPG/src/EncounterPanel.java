@@ -39,6 +39,8 @@ public class EncounterPanel extends JLayeredPane{
     JLabel HP;
     JLabel LVL;
 
+    boolean isEnemyTurn = false;
+
     BackgroundPanel backgroundPanel;
 
     public EncounterPanel(MainFrame frame, Player player){
@@ -160,11 +162,15 @@ public class EncounterPanel extends JLayeredPane{
             labelDialogue.setText(playerDialogueTexts[playerDialogueCount]);
             playerDialogueCount++;
         }else{
-            enemyTurn();
+            if(isEnemyTurn == false){
+                enemyTurn();
+            }
+            
             if(enemyDialogueCount <= enemyDialogueTexts.length - 1){
                 labelDialogue.setText(enemyDialogueTexts[enemyDialogueCount]);
                 enemyDialogueCount++;
             }else{
+                isEnemyTurn = false;
                 panelCardLayout.show(panelBox, "PanelOptions");
             }
         }
@@ -190,10 +196,10 @@ public class EncounterPanel extends JLayeredPane{
 
     private void enemyTurn(){
         String[] enemyAttackTexts = {"Enemy Fought Back!"};
+        isEnemyTurn = true;
         enemyDialogueTexts = enemyAttackTexts;
 
         labelDialogue.setText(enemyAttackTexts[0]);
-        System.out.println("Enemy TUrn");
         player.currentEnemy.attackCommand(player);
         update();
 

@@ -18,7 +18,10 @@ public class Enemy extends Entity {
 
     private File defaultMusicFile;
     private File musicFile;
-    private Clip clip;
+    private Clip BGMclip;
+
+    private File attackSFX = new File("Text-Based RPG\\SFX\\Attack.wav");
+    private Clip SFXClip;
 
     // Boss enemies
 private static final List<Enemy> BOSSES = List.of(
@@ -44,8 +47,9 @@ private static final List<Enemy> REGULAR_ENEMIES = List.of(
         this.defaultMusicFile = new File("Text-Based RPG\\Music\\In combat music.WAV");
         try {
             System.out.println("GettingCLip");
-            this.clip = AudioSystem.getClip();
-            this.clip.loop(Clip.LOOP_CONTINUOUSLY);
+            this.BGMclip = AudioSystem.getClip();
+            this.BGMclip.loop(Clip.LOOP_CONTINUOUSLY);
+            this.SFXClip = AudioSystem.getClip();
         } catch (LineUnavailableException ex) {
         }
     }
@@ -55,9 +59,9 @@ private static final List<Enemy> REGULAR_ENEMIES = List.of(
         this.imagePath = imagePath;
         this.musicFile = new File(musicPath);
         try {
-            System.out.println("GettingCLip");
-            this.clip = AudioSystem.getClip();
-            this.clip.loop(Clip.LOOP_CONTINUOUSLY);
+            this.BGMclip = AudioSystem.getClip();
+            this.BGMclip.loop(Clip.LOOP_CONTINUOUSLY);
+            this.SFXClip = AudioSystem.getClip();
         } catch (LineUnavailableException ex) {
         }
     }
@@ -65,15 +69,15 @@ private static final List<Enemy> REGULAR_ENEMIES = List.of(
     public Enemy(Enemy enemy){
         super(enemy.name, enemy.hp, enemy.atk, enemy.def, 0, enemy.matk, enemy.mdef, enemy.entityClass);
         this.imagePath = enemy.imagePath;
+        this.SFXClip = enemy.SFXClip;
         if(enemy.musicFile != null){
             this.musicFile = enemy.musicFile;
-            this.clip = enemy.clip;
-            PlayMusic(musicFile, clip);
+            this.BGMclip = enemy.BGMclip;
         }else{
             this.musicFile = enemy.defaultMusicFile;
-            this.clip = enemy.clip;
-            PlayMusic(musicFile, clip);
+            this.BGMclip = enemy.BGMclip;
         }
+        PlayMusic(musicFile, BGMclip);
         loadEnemyImage();
         
     }
@@ -176,17 +180,23 @@ private BufferedImage createPlaceholderImage() {
 
     public void Death(Player player){
         player.addExp(50);
-        StopMusic(musicFile, clip);
+        StopMusic(BGMclip);
     }
 
     public void attackCommand(Player entity){
         entity.takeDamage(this.calculatePhysicalDamage(entity.def));
+        PlayMusic(attackSFX, SFXClip);
+        System.out.println(entity.hp);
     }
 
     public static void PlayMusic(File musicPath, Clip clip){
         try {
 
             if(musicPath.exists()){
+                if(clip.isOpen()){
+                    clip.close();
+                }
+
                 AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
 
                 clip.open(audioInput);
@@ -199,12 +209,10 @@ private BufferedImage createPlaceholderImage() {
         }
     }
 
-    public static void StopMusic(File musicPath, Clip clip){
+    public static void StopMusic(Clip clip){
         try {
             
-            if(musicPath.exists()){
-                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
-                
+            if(clip != null){
                 if(clip.isOpen()){
                     clip.stop();
                 }
