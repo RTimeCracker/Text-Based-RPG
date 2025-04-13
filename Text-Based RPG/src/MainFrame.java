@@ -17,8 +17,10 @@ public class MainFrame extends JFrame{
 
     GameState currentGameState = GameState.MainMenu;
 
-    File menuMusicFile;
-    Clip menuClip;
+    File menuMusicFile = new File("Text-Based RPG\\Music\\RPGMENUBGM.wav");
+    File villageMusicFile = new File("Text-Based RPG\\Music\\Village Music.WAV");
+    File explorationMusicFile = new File("Text-Based RPG\\Music\\Main game BGM.WAV");
+    Clip BGMClip;
 
     CardLayout cardLayout;
     JPanel mainPanel;
@@ -40,10 +42,9 @@ public class MainFrame extends JFrame{
         this.setResizable(false);
         this.setSize(SCREENWIDTH,SCREENHEIGHT);
 
-        menuMusicFile = new File("Text-Based RPG\\Music\\RPGMENUBGM.wav");
-        menuClip = AudioSystem.getClip();
-        menuClip.loop(Clip.LOOP_CONTINUOUSLY);
-        PlayMusic(menuMusicFile, menuClip);
+        BGMClip = AudioSystem.getClip();
+        BGMClip.loop(Clip.LOOP_CONTINUOUSLY);
+        PlayMusic(menuMusicFile, BGMClip);
 
 
         cardLayout = new CardLayout();
@@ -56,17 +57,20 @@ public class MainFrame extends JFrame{
 
     public void updateGameState(GameState gameState) {
         currentGameState = gameState;
-        
+        StopMusic(BGMClip);
+
         switch (currentGameState) {
             case MainMenu:
                 System.out.println("Menu");
+                PlayMusic(menuMusicFile, BGMClip);
                 break;
             case Introduction:
                 switchPanel("IntroductionPanel");
-                StopMusic(menuMusicFile, menuClip);
+                
                 break;
             case Exploration:
                 switchPanel("ExplorationPanel");
+                PlayMusic(explorationMusicFile, BGMClip);
                 break;
             case Encounter:
                 switchPanel("EncounterPanel");
@@ -74,6 +78,7 @@ public class MainFrame extends JFrame{
             case Village:
                 villagePanel.updateGoldDisplay();
                 switchPanel("VillagePanel");
+                PlayMusic(villageMusicFile, BGMClip);
                 break;
         }
     }
@@ -130,6 +135,9 @@ public class MainFrame extends JFrame{
         try {
 
             if(musicPath.exists()){
+                if(clip.isOpen()){
+                    clip.close();
+                }
                 AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
 
                 clip.open(audioInput);
@@ -142,12 +150,10 @@ public class MainFrame extends JFrame{
         }
     }
 
-    public static void StopMusic(File musicPath, Clip clip){
+    public static void StopMusic(Clip clip){
         try {
             
-            if(musicPath.exists()){
-                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
-                
+            if(clip != null){
                 if(clip.isOpen()){
                     clip.stop();
                 }

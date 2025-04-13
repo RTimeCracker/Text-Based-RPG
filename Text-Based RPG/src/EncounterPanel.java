@@ -251,7 +251,7 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     public void setEnemy() {
-        enemyLabel = new JLabel("<html><body style='text-align:center;'>HP: "+ player.currentEnemy.hp +"<br>"+ player.currentEnemy.name +"</body></html>");
+        enemyLabel = new JLabel();
         if (enemyLabel != null) {
             this.remove(enemyLabel);
         }
@@ -260,7 +260,7 @@ public class EncounterPanel extends JLayeredPane{
         enemyLabel.setLayout(null);
         enemyLabel.setVisible(true);
     
-        enemyLabel.setIcon(new ImageIcon(setEnemyImage()));
+        enemyLabel.setIcon(new ImageIcon(player.currentEnemy.getEnemyImage()));
 
         enemyLabel.setText("<html><div style='text-align:center;'>" +
                          player.currentEnemy.name + "<br>" +
@@ -276,24 +276,7 @@ public class EncounterPanel extends JLayeredPane{
         // Force UI update
         this.revalidate();
         this.repaint();
-        // Debug output
-        System.out.println("Enemy set: " + player.currentEnemy.name);
 
-    }
-    
-    private Image createPlaceholderImage() {
-        BufferedImage img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = img.createGraphics();
-        
-        // Draw placeholder
-        g2d.setColor(Color.RED);
-        g2d.fillRect(0, 0, 200, 200);
-        g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Arial", Font.BOLD, 16));
-        g2d.drawString("IMAGE NOT FOUND", 20, 100);
-        
-        g2d.dispose();
-        return img;
     }
 
     private void setBackground(){
@@ -317,24 +300,7 @@ public class EncounterPanel extends JLayeredPane{
         }
     }
 
-    private Image setEnemyImage(){
-        try {
-            BufferedImage enemyImage;
-            System.out.println(player.currentEnemy.imagePath);
-            enemyImage = ImageIO.read(new File(player.currentEnemy.imagePath));
-            Image scaledImage = enemyImage.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-        
-            return scaledImage;
-            
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        
-
-        return null;
-    }
+   
 
     public void reSetup(){
         if(backgroundPanel != null && enemyLabel != null){
@@ -343,6 +309,8 @@ public class EncounterPanel extends JLayeredPane{
             this.revalidate();
             this.repaint();
         }
+        LVL.setText("LVL: " + player.level);
+
         panelCardLayout.show(panelBox, "PanelOptions");
         setBackground();
         setEnemy();
@@ -353,7 +321,9 @@ public class EncounterPanel extends JLayeredPane{
     public void update(){
         if(player.hp > 0 && player.currentEnemy.hp > 0){
             HP.setText("HP: " + player.hp);
-            enemyLabel.setText("<html><body style='text-align:center;'>HP: "+ player.currentEnemy.hp +"<br>"+ player.currentEnemy.name +"</body></html>");
+            enemyLabel.setText("<html><div style='text-align:center;'>" +
+                         player.currentEnemy.name + "<br>" +
+                         "HP: " + player.currentEnemy.hp + "</div></html>");
         }else{
             if(player.hp <= 0){
                 System.exit(0);

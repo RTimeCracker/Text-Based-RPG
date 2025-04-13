@@ -3,10 +3,12 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
 
 public class Enemy extends Entity {
     List<Item> itemDrop;
@@ -14,12 +16,16 @@ public class Enemy extends Entity {
     public String imagePath;
     private Image enemyImage;
 
+    private File defaultMusicFile;
+    private File musicFile;
+    private Clip clip;
+
     // Boss enemies
 private static final List<Enemy> BOSSES = List.of(
-    new Enemy(List.of(Item.HealingPotion.maxPotion()), "Dragon Lanz", 500, 100, 50, 30, 20, EntityClass.Tank, "Text-Based RPG\\Images\\Enemy\\LanzEnemy.png"),
-    new Enemy(List.of(Item.BuffPotion.mindJuice()), "Dark Mage Clark", 300, 40, 30, 150, 50, EntityClass.Mage, "Text-Based RPG\\Images\\Enemy\\ClarkEnemy.png"),
-    new Enemy(List.of(Item.CureItem.remedy()), "Demon King Orit", 800, 120, 80, 60, 40, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\OritEnemy.png"),
-    new Enemy(List.of(Item.HealingPotion.maxPotion()), "Sung Jin Who?", 700, 90, 70, 100, 60, EntityClass.Summoner, "Text-Based RPG\\Images\\Enemy\\RyanEnemy.png"),
+    new Enemy(List.of(Item.HealingPotion.maxPotion()), "Dragon Lanz", 500, 100, 50, 30, 20, EntityClass.Tank, "Text-Based RPG\\Images\\Enemy\\LanzEnemy.png", "Text-Based RPG\\Music\\Lanz_s theme (Boss theme).WAV"),
+    new Enemy(List.of(Item.BuffPotion.mindJuice()), "Dark Mage Clark", 300, 40, 30, 150, 50, EntityClass.Mage, "Text-Based RPG\\Images\\Enemy\\ClarkEnemy.png", "Text-Based RPG\\Music\\Kenneth_s theme (Boss theme).WAV"),
+    new Enemy(List.of(Item.CureItem.remedy()), "Demon King Orit", 800, 120, 80, 60, 40, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\OritEnemy.png", "Text-Based RPG\\Music\\Leo_s theme (Boss Theme).WAV"),
+    new Enemy(List.of(Item.HealingPotion.maxPotion()), "Sung Jin Who?", 700, 90, 70, 100, 60, EntityClass.Summoner, "Text-Based RPG\\Images\\Enemy\\RyanEnemy.png", "Text-Based RPG\\Music\\Ryans theme (Boss theme).WAV"),
     new Enemy(List.of(Item.HealingPotion.maxPotion()), "Sion The Fell Omen", 600, 50, 50, 30, 30, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\SionEnemy.png"),
     new Enemy(List.of(Item.HybridPotion.highElixir()), "Heavenly Demon King Khervin", 1000, 100, 100, 100, 100, EntityClass.Mage, "Text-Based RPG\\Images\\Enemy\\KhervinEnemy.png")
 );
@@ -35,11 +41,39 @@ private static final List<Enemy> REGULAR_ENEMIES = List.of(
         super(name, hp, atk, def, 0, matk, mdef, entityClass);
         this.itemDrop = itemDrop;
         this.imagePath = imagePath;
+        this.defaultMusicFile = new File("Text-Based RPG\\Music\\In combat music.WAV");
+        try {
+            System.out.println("GettingCLip");
+            this.clip = AudioSystem.getClip();
+            this.clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (LineUnavailableException ex) {
+        }
+    }
+    public Enemy(List<Item> itemDrop, String name, int hp, int atk, int def, int matk, int mdef, EntityClass entityClass, String imagePath, String musicPath) {
+        super(name, hp, atk, def, 0, matk, mdef, entityClass);
+        this.itemDrop = itemDrop;
+        this.imagePath = imagePath;
+        this.musicFile = new File(musicPath);
+        try {
+            System.out.println("GettingCLip");
+            this.clip = AudioSystem.getClip();
+            this.clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (LineUnavailableException ex) {
+        }
     }
 
     public Enemy(Enemy enemy){
         super(enemy.name, enemy.hp, enemy.atk, enemy.def, 0, enemy.matk, enemy.mdef, enemy.entityClass);
         this.imagePath = enemy.imagePath;
+        if(enemy.musicFile != null){
+            this.musicFile = enemy.musicFile;
+            this.clip = enemy.clip;
+            PlayMusic(musicFile, clip);
+        }else{
+            this.musicFile = enemy.defaultMusicFile;
+            this.clip = enemy.clip;
+            PlayMusic(musicFile, clip);
+        }
         loadEnemyImage();
         
     }
@@ -61,75 +95,6 @@ private static final List<Enemy> REGULAR_ENEMIES = List.of(
             System.err.println("Critical error loading image: " + e.getMessage());
             this.enemyImage = createPlaceholderImage();
     }
-}
-
-private BufferedImage tryLoadImage(String path) {
-    // Try as resource
-    BufferedImage img = tryLoadResource(path);
-    if (img != null) return img;
-    
-    // Try as file
-    img = tryLoadFile(path);
-    if (img != null) return img;
-    
-    // Try alternative path formats
-    return tryAlternativePaths(path);
-}
-
-private BufferedImage tryLoadResource(String path) {
-    try {
-        // Remove leading slash if present for resource loading
-        String resourcePath = path.startsWith("/") ? path.substring(1) : path;
-        InputStream stream = getClass().getClassLoader().getResourceAsStream(resourcePath);
-        if (stream != null) {
-            BufferedImage img = ImageIO.read(stream);
-            if (img != null) {
-                System.out.println("Successfully loaded as resource: " + resourcePath);
-                return img;
-            }
-        }
-    } catch (IOException e) {
-        System.err.println("Resource loading failed: " + path);
-    }
-    return null;
-}
-
-private BufferedImage tryLoadFile(String path) {
-    try {
-        File file = new File(path);
-        if (file.exists()) {
-            BufferedImage img = ImageIO.read(file);
-            if (img != null) {
-                System.out.println("Successfully loaded as file: " + path);
-                return img;
-            }
-        }
-    } catch (IOException e) {
-        System.err.println("File loading failed: " + path);
-    }
-    return null;
-}
-
-private BufferedImage tryAlternativePaths(String originalPath) {
-    // Try common alternative path formats
-    String[] alternatives = {
-        originalPath,
-        originalPath.replace("\\", "/"),
-        originalPath.replace("Text-Based RPG/", ""),
-        "images/" + originalPath.substring(originalPath.lastIndexOf("/") + 1),
-        "src/main/resources/" + originalPath
-    };
-    
-    for (String path : alternatives) {
-        if (!path.equals(originalPath)) {
-            BufferedImage img = tryLoadResource(path);
-            if (img != null) return img;
-            
-            img = tryLoadFile(path);
-            if (img != null) return img;
-        }
-    }
-    return null;
 }
 
 private BufferedImage createPlaceholderImage() {
@@ -211,9 +176,43 @@ private BufferedImage createPlaceholderImage() {
 
     public void Death(Player player){
         player.addExp(50);
+        StopMusic(musicFile, clip);
     }
 
     public void attackCommand(Player entity){
         entity.takeDamage(this.calculatePhysicalDamage(entity.def));
+    }
+
+    public static void PlayMusic(File musicPath, Clip clip){
+        try {
+
+            if(musicPath.exists()){
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+
+                clip.open(audioInput);
+                clip.start();
+            }else{
+                System.out.println("Can't find file.");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public static void StopMusic(File musicPath, Clip clip){
+        try {
+            
+            if(musicPath.exists()){
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+                
+                if(clip.isOpen()){
+                    clip.stop();
+                }
+            }else{
+                System.out.println("Can't find file.");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }

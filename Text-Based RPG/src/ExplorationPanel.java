@@ -53,8 +53,12 @@ public class ExplorationPanel extends JLayeredPane{
 
         if (player.zone != null && player.zone.zoneType == ZoneType.Village) {
             frame.updateGameState(MainFrame.GameState.Village);
-        } else if (player.zone.zoneType ==  ZoneType.Dungeon || player.zone.zoneType == ZoneType.Encounter) {
+        } else if (player.zone.zoneType == ZoneType.Encounter) {
             player.currentEnemy = Enemy.generateRandom();
+            frame.updateGameState(MainFrame.GameState.Encounter);
+            frame.update();
+        } else if(player.zone.zoneType == ZoneType.Dungeon){
+            player.currentEnemy = Enemy.generateBoss();
             frame.updateGameState(MainFrame.GameState.Encounter);
             frame.update();
         }
