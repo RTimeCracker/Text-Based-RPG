@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 public class Enemy extends Entity {
     List<Item> itemDrop;
     private static Random rand = new Random();
-    private String imagePath;
+    public String imagePath;
     private Image enemyImage;
 
     // Boss enemies
@@ -26,9 +26,9 @@ private static final List<Enemy> BOSSES = List.of(
 
 // Regular enemies
 private static final List<Enemy> REGULAR_ENEMIES = List.of(
-    new Enemy(new ArrayList<>(), "Goblin", 100, 30, 10, 5, 5, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\GoblinEnemy.gif"),
-    new Enemy(new ArrayList<>(), "Wolf", 80, 40, 5, 0, 0, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\WolfEnemy.png"),
-    new Enemy(new ArrayList<>(), "Slime", 50, 20, 2, 10, 10, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\SlimeEnemy.png")
+    new Enemy(new ArrayList<>(), "Goblin", 100, 30, 10, 5, 5, EntityClass.Warrior, "Text-Based RPG/Images/Enemy/GoblinEnemy.gif"),
+    new Enemy(new ArrayList<>(), "Wolf", 80, 40, 5, 0, 0, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\Spice-And-Wolf.png"),
+    new Enemy(new ArrayList<>(), "Slime", 50, 20, 2, 10, 10, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\Slime.png")
 );
 
     public Enemy(List<Item> itemDrop, String name, int hp, int atk, int def, int matk, int mdef, EntityClass entityClass, String imagePath) {
@@ -45,10 +45,12 @@ private static final List<Enemy> REGULAR_ENEMIES = List.of(
     }
 
     private void loadEnemyImage() {
+        System.out.println(this.imagePath);
+        System.out.println(new File(imagePath).canRead());
         try {
             // Try multiple loading strategies
-            BufferedImage img = ImageIO.read(new File(this.imagePath));
-            
+            BufferedImage img = ImageIO.read(new File(imagePath));
+        
             if (img == null) {
                 System.err.println("All image loading attempts failed for: " + imagePath);
                 img = createPlaceholderImage();
@@ -143,10 +145,9 @@ private BufferedImage createPlaceholderImage() {
 
 
     public Image getEnemyImage() {
+        System.out.println(this.enemyImage);
         return this.enemyImage;
     }
-
-    
 
     public static Enemy generateBoss() {
         return new Enemy(BOSSES.get(rand.nextInt(BOSSES.size())));

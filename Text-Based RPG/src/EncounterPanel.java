@@ -12,7 +12,6 @@ public class EncounterPanel extends JLayeredPane{
     Player player;
 
     JLabel enemyLabel;
-    ImageIcon enemyImage;
 
     JPanel panelBox;
     JPanel panelOptions;
@@ -260,26 +259,9 @@ public class EncounterPanel extends JLayeredPane{
         enemyLabel.setBounds(275, 50, 250, 400);
         enemyLabel.setLayout(null);
         enemyLabel.setVisible(true);
-        enemyLabel.setOpaque(false);
     
-        // Safe image loading with fallback
-        Image displayImage;
-        try {
-            Image originalImage = player.currentEnemy.getEnemyImage();
-            
-            if (originalImage == null) {
-                System.err.println("Enemy image is null for: " + player.currentEnemy.name);
-                displayImage = createPlaceholderImage();
-            } else {
-                int width = 200;
-                int height = 200;
-                displayImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            }
-        } catch (Exception e) {
-            System.err.println("Error loading enemy image: " + e.getMessage());
-            displayImage = createPlaceholderImage();
-        }
-        enemyLabel.setIcon(new ImageIcon(displayImage));
+        enemyLabel.setIcon(new ImageIcon(setEnemyImage()));
+
         enemyLabel.setText("<html><div style='text-align:center;'>" +
                          player.currentEnemy.name + "<br>" +
                          "HP: " + player.currentEnemy.hp + "</div></html>");
@@ -296,7 +278,7 @@ public class EncounterPanel extends JLayeredPane{
         this.repaint();
         // Debug output
         System.out.println("Enemy set: " + player.currentEnemy.name);
-        System.out.println("Image dimensions: " + displayImage.getWidth(null) + "x" + displayImage.getHeight(null));
+
     }
     
     private Image createPlaceholderImage() {
@@ -315,7 +297,6 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     private void setBackground(){
-        
         try {
             BufferedImage menuBackgroundImage;
             menuBackgroundImage = ImageIO.read(new File("Text-Based RPG\\Images\\Backgrounds\\BattleGround1.jpg"));
@@ -334,6 +315,25 @@ public class EncounterPanel extends JLayeredPane{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    private Image setEnemyImage(){
+        try {
+            BufferedImage enemyImage;
+            System.out.println(player.currentEnemy.imagePath);
+            enemyImage = ImageIO.read(new File(player.currentEnemy.imagePath));
+            Image scaledImage = enemyImage.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+        
+            return scaledImage;
+            
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        
+
+        return null;
     }
 
     public void reSetup(){
