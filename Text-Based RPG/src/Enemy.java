@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 public class Enemy extends Entity {
     List<Item> itemDrop;
     private static Random rand = new Random();
+    private String imagePath;
     private Image enemyImage;
 
     // Boss enemies
@@ -33,25 +34,30 @@ private static final List<Enemy> REGULAR_ENEMIES = List.of(
     public Enemy(List<Item> itemDrop, String name, int hp, int atk, int def, int matk, int mdef, EntityClass entityClass, String imagePath) {
         super(name, hp, atk, def, 0, matk, mdef, entityClass);
         this.itemDrop = itemDrop;
-        loadEnemyImage(imagePath);
+        this.imagePath = imagePath;
     }
 
-    private void loadEnemyImage(String imagePath) {
-    System.out.println("Attempting to load image: " + imagePath);
-    
-    try {
-        // Try multiple loading strategies
-        BufferedImage img = tryLoadImage(imagePath);
+    public Enemy(Enemy enemy){
+        super(enemy.name, enemy.hp, enemy.atk, enemy.def, 0, enemy.matk, enemy.mdef, enemy.entityClass);
+        this.imagePath = enemy.imagePath;
+        loadEnemyImage();
         
-        if (img == null) {
-            System.err.println("All image loading attempts failed for: " + imagePath);
-            img = createPlaceholderImage();
-        }
-        
-        this.enemyImage = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-    } catch (Exception e) {
-        System.err.println("Critical error loading image: " + e.getMessage());
-        this.enemyImage = createPlaceholderImage();
+    }
+
+    private void loadEnemyImage() {
+        try {
+            // Try multiple loading strategies
+            BufferedImage img = ImageIO.read(new File(this.imagePath));
+            
+            if (img == null) {
+                System.err.println("All image loading attempts failed for: " + imagePath);
+                img = createPlaceholderImage();
+            }
+            
+            this.enemyImage = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+        } catch (Exception e) {
+            System.err.println("Critical error loading image: " + e.getMessage());
+            this.enemyImage = createPlaceholderImage();
     }
 }
 
@@ -140,10 +146,7 @@ private BufferedImage createPlaceholderImage() {
         return this.enemyImage;
     }
 
-    public Enemy(Enemy enemy){
-        super(enemy.name, enemy.hp, enemy.atk, enemy.def, 0, enemy.matk, enemy.mdef, enemy.entityClass);
-        
-    }
+    
 
     public static Enemy generateBoss() {
         return new Enemy(BOSSES.get(rand.nextInt(BOSSES.size())));
