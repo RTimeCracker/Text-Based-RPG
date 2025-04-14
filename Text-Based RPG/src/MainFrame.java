@@ -85,16 +85,7 @@ public class MainFrame extends JFrame{
                 switchPanel("VillagePanel");
                 PlayMusic(villageMusicFile, BGMClip);
                 break;
-<<<<<<< HEAD
             
-=======
-
-                
-            case Ending:
-                switchPanel("EndingPanel");
-
-                break;
->>>>>>> 5fb3eba250b253902ca9c42f8ff9831077d105a2
         }
     }
 
