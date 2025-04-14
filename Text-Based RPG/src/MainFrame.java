@@ -80,6 +80,7 @@ public class MainFrame extends JFrame{
                 switchPanel("VillagePanel");
                 PlayMusic(villageMusicFile, BGMClip);
                 break;
+            
         }
     }
 
