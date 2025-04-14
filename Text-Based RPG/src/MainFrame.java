@@ -12,7 +12,7 @@ public class MainFrame extends JFrame{
     final int SCREENHEIGHT = 700;
 
     public enum GameState{
-        MainMenu, Introduction, Exploration, Encounter, Village
+        MainMenu, Introduction, Exploration, Encounter, Village, Ending
     }
 
     GameState currentGameState = GameState.MainMenu;
@@ -29,6 +29,7 @@ public class MainFrame extends JFrame{
     ExplorationPanel explorationPanel;
     EncounterPanel encounterPanel;
     VillagePanel villagePanel;
+    EndingRetryPanel endingPanel;
 
     String[] introductionDialogues = {"Welcome Vaiken: Last Legacy", "A game where you can explore, fight enemies, and gather loot!", "classchoice", "namechoice"};
     
@@ -52,6 +53,10 @@ public class MainFrame extends JFrame{
 
         initMainMenu();
         initIntroductionInterface();
+        initEndingPanel();
+
+        this.add(mainPanel);
+
         
     }
 
@@ -80,6 +85,12 @@ public class MainFrame extends JFrame{
                 switchPanel("VillagePanel");
                 PlayMusic(villageMusicFile, BGMClip);
                 break;
+
+                
+            case Ending:
+                switchPanel("EndingPanel");
+
+                break;
         }
     }
 
@@ -90,6 +101,10 @@ public class MainFrame extends JFrame{
             encounterPanel.reSetup();
         }
     }
+
+   
+
+ 
     
     private void initMainMenu() throws IOException{
         MainMenuPanel mainMenuPanel = new MainMenuPanel(this, mainPanel, cardLayout);
@@ -110,6 +125,12 @@ public class MainFrame extends JFrame{
 
     }
 
+    public void initEndingPanel() {
+        endingPanel = new EndingRetryPanel(this, mainPanel, cardLayout);
+        mainPanel.add(endingPanel, "EndingPanel");
+    }
+
+
     public void initEncounterPanel(){
         encounterPanel = new EncounterPanel(this,player);
 
@@ -125,6 +146,12 @@ public class MainFrame extends JFrame{
     private void switchPanel(String text){
         cardLayout.show(mainPanel, text);
     } 
+
+    public void resetGame() {
+        player = null;
+        introductionPanel = new IntroductionClickablePanel(this, introductionDialogues);
+        mainPanel.add(introductionPanel, "IntroductionPanel");
+    }
 
     public void initVillageInterface() {
         villagePanel = new VillagePanel(this, player);
