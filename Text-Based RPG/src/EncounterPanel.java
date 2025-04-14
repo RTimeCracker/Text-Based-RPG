@@ -22,6 +22,8 @@ public class EncounterPanel extends JLayeredPane{
     JPanel panelCommands;
     JPanel inventoryCommands;
 
+    JButton attackButton;
+
     JLabel labelDialogue;
 
     Item selectedItem;
@@ -40,6 +42,7 @@ public class EncounterPanel extends JLayeredPane{
     JLabel LVL;
 
     boolean isEnemyTurn = false;
+    boolean onAction = false;
 
     BackgroundPanel backgroundPanel;
 
@@ -105,7 +108,7 @@ public class EncounterPanel extends JLayeredPane{
         panelCommands.setBounds(375,3,372, 194);
         panelCommands.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
-        JButton attackButton = new JButton("Attack");
+        attackButton = new JButton("Attack");
         JButton skillsButton = new JButton("Skills");
         JButton inventory = new JButton("Inventory");
 
@@ -158,10 +161,12 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     private void onDialoguePanelClick(){    
+        
         if(playerDialogueCount <= playerDialogueTexts.length - 1){
             labelDialogue.setText(playerDialogueTexts[playerDialogueCount]);
             playerDialogueCount++;
         }else{
+            
             if(isEnemyTurn == false){
                 enemyTurn();
             }
@@ -171,13 +176,22 @@ public class EncounterPanel extends JLayeredPane{
                 enemyDialogueCount++;
             }else{
                 isEnemyTurn = false;
+                onAction = false;
+                attackButton.setEnabled(true);
                 panelCardLayout.show(panelBox, "PanelOptions");
             }
         }
+        
+       
 
     }
 
     private void onAttackButtonClick(){
+        if(onAction) return;
+        onAction = true;
+        attackButton.setEnabled(false);
+        
+        System.out.println("WOAH WOAH!~");
         String[] playerAttackTexts = {"Attacked Enemy!"};
         playerDialogueTexts = playerAttackTexts;
 
@@ -188,6 +202,9 @@ public class EncounterPanel extends JLayeredPane{
         playerDialogueCount = 1;
         enemyDialogueCount = 0;
         panelCardLayout.show(panelBox, "PanelDialogue");
+    
+            
+
     }
 
     private void onSkillsButtonClick(){
@@ -330,11 +347,11 @@ public class EncounterPanel extends JLayeredPane{
             enemyLabel.setText("<html><body style='text-align:center;'>HP: "+ player.currentEnemy.hp +"<br>"+ player.currentEnemy.name +"</body></html>");
         } else {
             if (player.hp <= 0) {
-                SwingUtilities.invokeLater(() -> frame.updateGameState(MainFrame.GameState.Ending));
+                frame.updateGameState(MainFrame.GameState.Ending);
             } else if (player.currentEnemy.hp <= 0) {
                 player.currentEnemy.Death(player);
                 reSetup();
-                SwingUtilities.invokeLater(() -> frame.updateGameState(MainFrame.GameState.Exploration));
+                frame.updateGameState(MainFrame.GameState.Exploration);
             }
         }
     }

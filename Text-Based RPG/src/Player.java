@@ -232,7 +232,9 @@ public class Player extends Entity {
 
             if(musicPath.exists()){
                 if(clip.isOpen()){
-                    clip.close();
+                    clip.setFramePosition(0);
+                    clip.start();
+                    return;
                 }
                 AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
 

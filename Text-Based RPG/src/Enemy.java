@@ -114,7 +114,6 @@ private BufferedImage createPlaceholderImage() {
 
 
     public Image getEnemyImage() {
-        System.out.println(this.enemyImage);
         return this.enemyImage;
     }
 
@@ -186,7 +185,6 @@ private BufferedImage createPlaceholderImage() {
     public void attackCommand(Player entity){
         entity.takeDamage(this.calculatePhysicalDamage(entity.def));
         PlayMusic(attackSFX, SFXClip);
-        System.out.println(entity.hp);
     }
 
     public static void PlayMusic(File musicPath, Clip clip){
@@ -194,7 +192,9 @@ private BufferedImage createPlaceholderImage() {
 
             if(musicPath.exists()){
                 if(clip.isOpen()){
-                    clip.close();
+                    clip.setFramePosition(0);
+                    clip.start();
+                    return;
                 }
 
                 AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
