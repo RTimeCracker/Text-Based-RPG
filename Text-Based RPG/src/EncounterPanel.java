@@ -325,18 +325,16 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     public void update(){
-        if(player.hp > 0 && player.currentEnemy.hp > 0){
+        if (player.hp > 0 && player.currentEnemy.hp > 0) {
             HP.setText("HP: " + player.hp);
-            enemyLabel.setText("<html><div style='text-align:center;'>" +
-                         player.currentEnemy.name + "<br>" +
-                         "HP: " + player.currentEnemy.hp + "</div></html>");
-        }else{
-            if(player.hp <= 0){
-                System.exit(0);
-            }else if(player.currentEnemy.hp <= 0){
+            enemyLabel.setText("<html><body style='text-align:center;'>HP: "+ player.currentEnemy.hp +"<br>"+ player.currentEnemy.name +"</body></html>");
+        } else {
+            if (player.hp <= 0) {
+                SwingUtilities.invokeLater(() -> frame.updateGameState(MainFrame.GameState.Ending));
+            } else if (player.currentEnemy.hp <= 0) {
                 player.currentEnemy.Death(player);
                 reSetup();
-                frame.updateGameState(MainFrame.GameState.Exploration);
+                SwingUtilities.invokeLater(() -> frame.updateGameState(MainFrame.GameState.Exploration));
             }
         }
     }
