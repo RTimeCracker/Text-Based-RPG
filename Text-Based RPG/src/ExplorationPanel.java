@@ -13,12 +13,14 @@ public class ExplorationPanel extends JLayeredPane{
     JLabel coordinatesLabel = new JLabel();
     BackgroundPanel backgroundPanel;
     Player player;
+    Database database;
 
-    public ExplorationPanel(MainFrame frame, Player player) throws IOException{
+    public ExplorationPanel(MainFrame frame, Player player, Database database) throws IOException{
         this.frame = frame;
         this.setSize(new Dimension(frame.SCREENWIDTH, frame.SCREENHEIGHT));
         this.setLayout(null);
         this.player = player;
+        this.database = database;
 
         setBackground();
         setButtons();
@@ -54,11 +56,11 @@ public class ExplorationPanel extends JLayeredPane{
         if (player.zone != null && player.zone.zoneType == ZoneType.Village) {
             frame.updateGameState(MainFrame.GameState.Village);
         } else if (player.zone.zoneType == ZoneType.Encounter) {
-            player.currentEnemy = Enemy.generateRandom();
+            player.currentEnemy = Enemy.generateRandom(database);
             frame.updateGameState(MainFrame.GameState.Encounter);
             frame.update();
         } else if(player.zone.zoneType == ZoneType.Dungeon){
-            player.currentEnemy = Enemy.generateBoss();
+            player.currentEnemy = Enemy.generateBoss(database);
             frame.updateGameState(MainFrame.GameState.Encounter);
             frame.update();
         }

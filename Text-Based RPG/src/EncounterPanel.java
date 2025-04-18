@@ -42,7 +42,6 @@ public class EncounterPanel extends JLayeredPane{
     JLabel LVL;
 
     boolean isEnemyTurn = false;
-    boolean onAction = false;
 
     BackgroundPanel backgroundPanel;
 
@@ -176,8 +175,6 @@ public class EncounterPanel extends JLayeredPane{
                 enemyDialogueCount++;
             }else{
                 isEnemyTurn = false;
-                onAction = false;
-                attackButton.setEnabled(true);
                 panelCardLayout.show(panelBox, "PanelOptions");
             }
         }
@@ -187,10 +184,6 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     private void onAttackButtonClick(){
-        if(onAction) return;
-        onAction = true;
-        attackButton.setEnabled(false);
-        
         System.out.println("WOAH WOAH!~");
         String[] playerAttackTexts = {"Attacked Enemy!"};
         playerDialogueTexts = playerAttackTexts;

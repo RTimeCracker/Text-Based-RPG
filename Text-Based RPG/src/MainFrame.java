@@ -35,9 +35,13 @@ public class MainFrame extends JFrame{
     
     Player player;
 
+    public Database database;
+
 
     public MainFrame(String title) throws IOException, LineUnavailableException{
         super(title);
+
+        database = new Database();
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -114,7 +118,7 @@ public class MainFrame extends JFrame{
     }
 
     public void initExplorationInterface() throws IOException{
-        explorationPanel = new ExplorationPanel(this, player);
+        explorationPanel = new ExplorationPanel(this, player, database);
         mainPanel.add(explorationPanel, "ExplorationPanel");
         player.setFrame(this);
 
