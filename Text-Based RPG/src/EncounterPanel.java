@@ -277,7 +277,10 @@ public class EncounterPanel extends JLayeredPane{
         enemyLabel.setLayout(null);
         enemyLabel.setVisible(true);
     
-        enemyLabel.setIcon(new ImageIcon(player.currentEnemy.getEnemyImage()));
+        if(player.currentEnemy.getEnemyImage() != null){
+            enemyLabel.setIcon(new ImageIcon(player.currentEnemy.getEnemyImage()));
+        }
+        
 
         enemyLabel.setText("<html><div style='text-align:center;'>" +
                          player.currentEnemy.name + "<br>" +
@@ -337,13 +340,13 @@ public class EncounterPanel extends JLayeredPane{
 
     public void update(){
         if (player.hp > 0 && player.currentEnemy.hp > 0) {
-            HP.setText("HP: " + player.hp);
+            HP.setText("HP: " + player.hp + "/" + player.maxHp);
             enemyLabel.setText("<html><body style='text-align:center;'>HP: "+ player.currentEnemy.hp +"<br>"+ player.currentEnemy.name +"</body></html>");
         } else {
             if (player.hp <= 0) {
                 frame.updateGameState(MainFrame.GameState.Ending);
             } else if (player.currentEnemy.hp <= 0) {
-                player.currentEnemy.Death(player);
+                player.currentEnemy.onDeath(player);
                 reSetup();
                 frame.updateGameState(MainFrame.GameState.Exploration);
             }

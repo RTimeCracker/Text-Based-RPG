@@ -81,6 +81,7 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
             this.musicFile = enemy.defaultMusicFile;
             this.BGMclip = enemy.BGMclip;
         }
+        
         PlayMusic(musicFile, BGMclip);
         loadEnemyImage();
         
@@ -95,26 +96,27 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
         
             if (img == null) {
                 System.err.println("All image loading attempts failed for: " + imagePath);
-                img = createPlaceholderImage();
+                this.enemyImage = createPlaceholderImage();
+                return;
             }
             
             this.enemyImage = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
         } catch (Exception e) {
             System.err.println("Critical error loading image: " + e.getMessage());
             this.enemyImage = createPlaceholderImage();
+        }
     }
-}
 
-private BufferedImage createPlaceholderImage() {
-    BufferedImage img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g2d = img.createGraphics();
-    g2d.setColor(Color.RED);
-    g2d.fillRect(0, 0, 200, 200);
-    g2d.setColor(Color.BLACK);
-    g2d.drawString("Image Missing", 50, 100);
-    g2d.dispose();
-    return img;
-}
+    private BufferedImage createPlaceholderImage() {
+        BufferedImage img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = img.createGraphics();
+        g2d.setColor(Color.RED);
+        g2d.fillRect(0, 0, 200, 200);
+        g2d.setColor(Color.BLACK);
+        g2d.drawString("Image Missing", 50, 100);
+        g2d.dispose();
+        return img;
+    }
 
 
     public Image getEnemyImage() {
@@ -123,9 +125,14 @@ private BufferedImage createPlaceholderImage() {
 
     public static Enemy generateBoss(Database database) {
         try {
-            int randomNumber = rand.nextInt(database.fetchData("select count(*) from bossenemy").getInt(1) + 1);
+            int randomNumber = rand.nextInt(database.fetchData("select count(*) from bossenemy").getInt(1)) + 1;
             ResultSet enemyData = database.fetchData("select * from bossenemy where EnemyID = " + randomNumber);
-            Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)),enemyData.getString(9));
+            if(enemyData.getString(10) == null){
+                Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)),enemyData.getString(9));
+                return  enemy;
+            }
+
+            Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)),enemyData.getString(9), enemyData.getString(10));
 
             return new Enemy(enemy);
         } catch (SQLException ex) {
@@ -204,7 +211,7 @@ private BufferedImage createPlaceholderImage() {
         this.hp -= damage;
     }
 
-    public void Death(Player player){
+    public void onDeath(Player player){
         player.addExp(50);
         StopMusic(BGMclip);
     }
@@ -228,6 +235,7 @@ private BufferedImage createPlaceholderImage() {
 
                 clip.open(audioInput);
                 clip.start();
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
             }else{
                 System.out.println("Can't find file.");
             }
