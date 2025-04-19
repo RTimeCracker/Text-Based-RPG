@@ -87,7 +87,7 @@ public class EncounterPanel extends JLayeredPane{
         panelStatus.setBounds(3,3,372, 194);
         panelStatus.setLayout(new BoxLayout(panelStatus,BoxLayout.PAGE_AXIS));
 
-        HP = new JLabel("HP: " + player.hp);
+        HP = new JLabel("HP: " + player.hp + "/" + player.maxHp);
         HP.setMaximumSize(new Dimension(200, 50));
         HP.setPreferredSize(new Dimension(200, 30));
         HP.setFont(new Font("Roboto",Font.BOLD,32));
@@ -228,6 +228,8 @@ public class EncounterPanel extends JLayeredPane{
             button.setCursor(new Cursor(Cursor.HAND_CURSOR));
             button.setMaximumSize(new Dimension(500,100));
             button.setPreferredSize(new Dimension(500,100));
+
+            button.setIcon(new ImageIcon(player.inventory.get(i).image));
             button.setHorizontalAlignment(SwingConstants.LEFT);
 
             button.addActionListener(e -> onItemButtonClick(buttonIndex));
@@ -267,7 +269,6 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     public void setEnemy() {
-        enemyLabel = new JLabel();
         if (enemyLabel != null) {
             this.remove(enemyLabel);
         }

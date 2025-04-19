@@ -38,7 +38,7 @@ public class Enemy extends Entity {
 
 // Regular enemies
 private static List<Enemy> REGULAR_ENEMIES = List.of(
-    new Enemy(new ArrayList<>(), "Goblin", 100, 30, 10, 5, 5, EntityClass.Warrior, "Text-Based RPG/Images/Enemy/GoblinEnemy.gif"),
+    new Enemy(new ArrayList<>(), "Goblin", 100, 30, 10, 5, 5, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\GoblinEnemy.gif"),
     new Enemy(new ArrayList<>(), "Wolf", 80, 40, 5, 0, 0, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\Spice-And-Wolf.png"),
     new Enemy(new ArrayList<>(), "Slime", 50, 20, 2, 10, 10, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\Slime.png")
 );*/
@@ -123,9 +123,9 @@ private BufferedImage createPlaceholderImage() {
 
     public static Enemy generateBoss(Database database) {
         try {
-            int randomNumber = rand.nextInt(database.fetchData("select count(*) from bossenemy").getInt(1) - 1);
+            int randomNumber = rand.nextInt(database.fetchData("select count(*) from bossenemy").getInt(1) + 1);
             ResultSet enemyData = database.fetchData("select * from bossenemy where EnemyID = " + randomNumber);
-            Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.Tank,enemyData.getString(9));
+            Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)),enemyData.getString(9));
 
             return new Enemy(enemy);
         } catch (SQLException ex) {
@@ -138,10 +138,10 @@ private BufferedImage createPlaceholderImage() {
     public static Enemy generateRandom(Database database) {
         
         try {
-            int randomNumber = rand.nextInt(database.fetchData("select count(*) from bossenemy").getInt(1)) + 1;
+            int randomNumber = rand.nextInt(database.fetchData("select count(*) from regularenemy").getInt(1)) + 1;
             System.out.println(randomNumber);
-            ResultSet enemyData = database.fetchData("select * from bossenemy where EnemyID = " + randomNumber);
-            Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.Tank,enemyData.getString(9));
+            ResultSet enemyData = database.fetchData("select * from regularenemy where regularenemyID = " + randomNumber);
+            Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)),enemyData.getString(9));
             
             return new Enemy(enemy);
             
