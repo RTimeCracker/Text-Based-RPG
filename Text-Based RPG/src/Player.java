@@ -26,6 +26,20 @@ public class Player extends Entity {
 
     public Enemy currentEnemy;
 
+    public ArrayList<String> GoodDialogue = new ArrayList<>(Arrays.asList(
+        "Hey, I just wanted to tell you that your clothing looks really good on you and fits your whole vibe.",
+        "Hii, your hair looks really good and smells like a field surrounded by beautiful and vibrant flowers.",
+        "Your voice sounds so eloquent, every word from your mouth is a sweet rhythm that blesses my ears and fills my stomach with butterflies.",
+        "Hi, your eyes look really good and equally as beautiful as the clear blue skies."
+    ));
+
+    public ArrayList<String> BadDialogue = new ArrayList<>(Arrays.asList(
+        "Oh hey, I just wanted to tell you that your fashion sense doesn't make sense and your clothes are as ugly as you.",
+        "Err, how much did it cost to get a haircut as ugly as yours? I want to avoid your barber.",
+        "Can you please stop looking at me with those weird eyes? It's uncomfortable that a swine like you is staring at me.",
+        "Please stop talking, your breath stinks and feels like two clown horns honking in both my ears."
+    ));
+
     public Player(String name, int money, EntityClass playerClass, MainFrame frame) {
         super(name, 0, 0, 0, 0, 0, 0, playerClass);
         this.frame = frame;

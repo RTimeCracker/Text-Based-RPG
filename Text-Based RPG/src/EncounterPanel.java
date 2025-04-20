@@ -3,6 +3,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -20,11 +25,17 @@ public class EncounterPanel extends JLayeredPane{
     JPanel panelInventoryContents;
     JPanel panelStatus;
     JPanel panelCommands;
+    JPanel talkPanel;
+    JPanel talkPanelChoices;
     JPanel inventoryCommands;
 
     JButton attackButton;
+    JButton talkButton;
+    JButton talkChoice1;
+    JButton talkChoice2;
 
     JLabel labelDialogue;
+    
 
     Item selectedItem;
 
@@ -80,6 +91,7 @@ public class EncounterPanel extends JLayeredPane{
         labelDialogue = new JLabel();
         labelDialogue.setFont(new Font("Roboto",Font.BOLD,32));
 
+
         panelDialogue.add(labelDialogue);
 
         panelStatus = new JPanel();   
@@ -110,14 +122,22 @@ public class EncounterPanel extends JLayeredPane{
         attackButton = new JButton("Attack");
         JButton skillsButton = new JButton("Skills");
         JButton inventory = new JButton("Inventory");
+        talkButton = new JButton();
+        talkButton.setEnabled(false);
 
         attackButton.addActionListener(e -> onAttackButtonClick());
         skillsButton.addActionListener(e -> onSkillsButtonClick());
         inventory.addActionListener(e -> onInventoryButtonClick());
+        talkButton.addActionListener(e -> onTalkButtonClick());
         
         panelCommands.add(attackButton);
         panelCommands.add(skillsButton);
         panelCommands.add(inventory);
+        panelCommands.add(talkButton);
+        talkButton.setOpaque(true);
+        talkButton.setContentAreaFilled(false);
+        talkButton.setBorderPainted(false);
+        talkButton.setFocusPainted(false);
 
         panelOptions.add(panelStatus);
         panelOptions.add(panelCommands);
@@ -150,11 +170,51 @@ public class EncounterPanel extends JLayeredPane{
         inventoryCommands.add(exitButton);
         panelInventory.add(inventoryCommands);
 
+        //====Talk Panel====
+        talkPanel = new JPanel();
+        talkPanel.setBounds(0,0,750,200);
+        talkPanel.setLayout(null);
+
+        talkPanelChoices = new JPanel();
+    
+        talkPanelChoices.setLayout(new BoxLayout(talkPanelChoices,BoxLayout.PAGE_AXIS));
+        talkPanelChoices.setBounds(10,10,533,180);
+        talkPanelChoices.setBorder(BorderFactory.createLineBorder(Color.BLACK,3));
+
+        talkChoice1 = new JButton();
+        talkChoice2 = new JButton();
+
+        talkChoice1.setVerticalAlignment(SwingConstants.TOP);
+        talkChoice1.setHorizontalAlignment(SwingConstants.LEFT);
+        talkChoice1.setForeground(Color.BLACK);
+        talkChoice1.setBackground(Color.white);
+        talkChoice1.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        talkChoice1.setMaximumSize(new Dimension(500,80));
+        talkChoice1.setPreferredSize(new Dimension(500,80));
+
+        talkChoice2.setVerticalAlignment(SwingConstants.TOP);
+        talkChoice2.setHorizontalAlignment(SwingConstants.LEFT);
+        talkChoice2.setForeground(Color.BLACK);
+        talkChoice2.setBackground(Color.white);
+        talkChoice2.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        talkChoice2.setMaximumSize(new Dimension(500,90));
+        talkChoice2.setPreferredSize(new Dimension(500,90));
+
+        talkPanelChoices.add(Box.createRigidArea(new Dimension(0,10)));
+        talkPanelChoices.add(talkChoice1);
+        talkPanelChoices.add(Box.createRigidArea(new Dimension(0,10)));
+        talkPanelChoices.add(talkChoice2);
+        talkPanelChoices.add(Box.createRigidArea(new Dimension(0,10)));
+
+        talkPanel.add(talkPanelChoices);
+
+
         panelBox.add(panelOptions, "PanelOptions");        
         panelCardLayout.show(panelBox, "PanelOptions");
 
         panelBox.add(panelDialogue, "PanelDialogue");
         panelBox.add(panelInventory, "PanelInventory");
+        panelBox.add(talkPanel, "TalkPanel");
 
         this.add(panelBox, Integer.valueOf(1));
     }
@@ -184,7 +244,6 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     private void onAttackButtonClick(){
-        System.out.println("WOAH WOAH!~");
         String[] playerAttackTexts = {"Attacked Enemy!"};
         playerDialogueTexts = playerAttackTexts;
 
@@ -195,13 +254,57 @@ public class EncounterPanel extends JLayeredPane{
         playerDialogueCount = 1;
         enemyDialogueCount = 0;
         panelCardLayout.show(panelBox, "PanelDialogue");
-    
-            
-
     }
 
     private void onSkillsButtonClick(){
 
+    }
+
+    private void onTalkButtonClick(){
+        Random random = new Random();
+        String goodDialogue = player.GoodDialogue.get(random.nextInt(player.GoodDialogue.size()));
+        String badDialogue = player.BadDialogue.get(random.nextInt(player.BadDialogue.size()));
+        List<String> dialogues = new ArrayList();
+        dialogues.add(badDialogue);
+        dialogues.add(goodDialogue);
+        Collections.shuffle(dialogues);
+
+        talkChoice1.setText("<html>" + dialogues.get(0) + "</html>");
+        talkChoice2.setText("<html>" + dialogues.get(1) + "</html>");
+
+        if(talkChoice1.getText().equals(badDialogue)){
+            talkChoice1.addActionListener(e -> onBadTalkButtonClick(talkChoice1.getText()));
+            talkChoice2.addActionListener(e -> onGoodTalkButtonClick(talkChoice2.getText()));
+        }else{
+            talkChoice1.addActionListener(e -> onGoodTalkButtonClick(talkChoice2.getText()));
+            talkChoice2.addActionListener(e -> onBadTalkButtonClick(talkChoice1.getText()));
+        }
+
+        panelCardLayout.show(panelBox, "TalkPanel");
+    }
+
+    private void onBadTalkButtonClick(String playerText){
+        String[] playerTalkTexts = {playerText};
+        playerDialogueTexts = playerTalkTexts;
+
+        labelDialogue.setText(playerTalkTexts[0]);
+        update();
+
+        playerDialogueCount = 1;
+        enemyDialogueCount = 0;
+        panelCardLayout.show(panelBox, "PanelDialogue");
+    }
+
+    private void onGoodTalkButtonClick(String playerText){
+        String[] playerTalkTexts = {playerText};
+        playerDialogueTexts = playerTalkTexts;
+
+        labelDialogue.setText(playerTalkTexts[0]);
+        update();
+
+        playerDialogueCount = 1;
+        enemyDialogueCount = 0;
+        panelCardLayout.show(panelBox, "PanelDialogue");
     }
 
     private void enemyTurn(){
@@ -330,6 +433,21 @@ public class EncounterPanel extends JLayeredPane{
             this.repaint();
         }
         LVL.setText("LVL: " + player.level);
+        if(player.zone.zoneType == ZoneType.Dungeon){
+            talkButton.setOpaque(true);
+            talkButton.setContentAreaFilled(true);
+            talkButton.setBorderPainted(true);
+            talkButton.setFocusPainted(true);
+            talkButton.setText("Talk");
+            talkButton.setEnabled(true);
+        }else{
+            talkButton.setOpaque(false);
+            talkButton.setContentAreaFilled(false);
+            talkButton.setBorderPainted(false);
+            talkButton.setFocusPainted(false);
+            talkButton.setText("");
+            talkButton.setEnabled(false);
+        }
 
         panelCardLayout.show(panelBox, "PanelOptions");
         setBackground();

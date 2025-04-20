@@ -25,6 +25,9 @@ public class Enemy extends Entity {
     private File attackSFX = new File("Text-Based RPG\\SFX\\Attack.wav");
     private Clip SFXClip;
 
+    private Character gender;
+    private int hearts = 0;
+
     // Boss enemies
 /*private static List<Enemy> BOSSES = List.of(
     new Enemy(List.of(Item.HealingPotion.maxPotion()), "Dragon Lanz", 500, 100, 50, 30, 20, EntityClass.Tank, "Text-Based RPG\\Images\\Enemy\\LanzEnemy.png", "Text-Based RPG\\Music\\Lanz_s theme (Boss theme).WAV"),
@@ -51,20 +54,32 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
         try {
             System.out.println("GettingCLip");
             this.BGMclip = AudioSystem.getClip();
-            this.BGMclip.loop(Clip.LOOP_CONTINUOUSLY);
             this.SFXClip = AudioSystem.getClip();
         } catch (LineUnavailableException ex) {
         }
     }   
     
-    public Enemy(List<Item> itemDrop, String name, int hp, int atk, int def, int matk, int mdef, EntityClass entityClass, String imagePath, String musicPath) {
+    public Enemy(List<Item> itemDrop, String name, int hp, int atk, int def, int matk, int mdef, EntityClass entityClass, Character gender, String imagePath, String musicPath) {
         super(name, hp, atk, def, 0, matk, mdef, entityClass);
         this.itemDrop = itemDrop;
         this.imagePath = imagePath;
         this.musicFile = new File(musicPath);
+        this.gender = gender;
         try {
             this.BGMclip = AudioSystem.getClip();
             this.BGMclip.loop(Clip.LOOP_CONTINUOUSLY);
+            this.SFXClip = AudioSystem.getClip();
+        } catch (LineUnavailableException ex) {
+        }
+    } 
+    public Enemy(List<Item> itemDrop, String name, int hp, int atk, int def, int matk, int mdef, EntityClass entityClass, Character gender, String imagePath) {
+        super(name, hp, atk, def, 0, matk, mdef, entityClass);
+        this.itemDrop = itemDrop;
+        this.imagePath = imagePath;
+        this.defaultMusicFile = new File("Text-Based RPG\\Music\\In combat music.WAV");
+        this.gender = gender;
+        try {
+            this.BGMclip = AudioSystem.getClip();
             this.SFXClip = AudioSystem.getClip();
         } catch (LineUnavailableException ex) {
         }
@@ -127,12 +142,12 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
         try {
             int randomNumber = rand.nextInt(database.fetchData("select count(*) from bossenemy").getInt(1)) + 1;
             ResultSet enemyData = database.fetchData("select * from bossenemy where EnemyID = " + randomNumber);
-            if(enemyData.getString(10) == null){
-                Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)),enemyData.getString(9));
+            if(enemyData.getString(11) == null){
+                Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)), enemyData.getString(9).charAt(0),enemyData.getString(10));
                 return  enemy;
             }
 
-            Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)),enemyData.getString(9), enemyData.getString(10));
+            Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)), enemyData.getString(9).charAt(0),enemyData.getString(10), enemyData.getString(11));
 
             return new Enemy(enemy);
         } catch (SQLException ex) {
@@ -218,7 +233,62 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
 
     public void attackCommand(Player entity){
         entity.takeDamage(this.calculatePhysicalDamage(entity.def));
-        PlayMusic(attackSFX, SFXClip);
+        PlaySFX(attackSFX, SFXClip);
+    }
+
+    public void increaseHearts(int amount){
+        if(amount > 5){
+            hearts = 5;
+        }else{
+            hearts += amount;
+        }
+    }
+
+    public String respondToTalk(boolean isGood, Database database){
+        if(isGood){ 
+            try {
+                int randomNumber = rand.nextInt(database.fetchData("select count(*) from MaleBossEnemyDialogues where IsGood = true").getInt(1)) + 1;
+				ResultSet dialogue = database.fetchData(" select *from MaleBossEnemyDialogues where DialogueID = " + randomNumber);
+
+                return dialogue.getString(2);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }else{
+            try {
+                int randomNumber = rand.nextInt(database.fetchData("select count(*) from MaleBossEnemyDialogues where IsGood = false").getInt(1)) + 1;
+				ResultSet dialogue = database.fetchData(" select *from MaleBossEnemyDialogues where DialogueID = " + randomNumber);
+
+                return dialogue.getString(2);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        return null;
+    }
+
+    public static void PlaySFX(File musicPath, Clip clip){
+        try {
+
+            if(musicPath.exists()){
+                if(clip.isOpen()){
+                    clip.setFramePosition(0);
+                    clip.start();
+                    return;
+                }
+
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+
+                clip.open(audioInput);
+                clip.start();
+            }else{
+                System.out.println("Can't find file.");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     public static void PlayMusic(File musicPath, Clip clip){
