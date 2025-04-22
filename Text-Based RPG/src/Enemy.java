@@ -236,11 +236,23 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
         PlaySFX(attackSFX, SFXClip);
     }
 
+    public int getHearts(){
+        return hearts;
+    }
+
     public void increaseHearts(int amount){
         if(amount > 5){
             hearts = 5;
         }else{
             hearts += amount;
+        }
+    }
+    
+    public void decreaseHearts(int amount){
+        if(amount > 5){
+            hearts = 5;
+        }else{
+            hearts -= amount;
         }
     }
 
