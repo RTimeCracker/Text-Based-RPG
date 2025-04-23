@@ -28,6 +28,7 @@ public class Enemy extends Entity {
     private Character gender;
     private int hearts = 0;
 
+
     // Boss enemies
 /*private static List<Enemy> BOSSES = List.of(
     new Enemy(List.of(Item.HealingPotion.maxPotion()), "Dragon Lanz", 500, 100, 50, 30, 20, EntityClass.Tank, "Text-Based RPG\\Images\\Enemy\\LanzEnemy.png", "Text-Based RPG\\Music\\Lanz_s theme (Boss theme).WAV"),
@@ -89,6 +90,7 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
         super(enemy.name, enemy.hp, enemy.atk, enemy.def, 0, enemy.matk, enemy.mdef, enemy.entityClass);
         this.imagePath = enemy.imagePath;
         this.SFXClip = enemy.SFXClip;
+        this.gender = enemy.gender;
         if(enemy.musicFile != null){
             this.musicFile = enemy.musicFile;
             this.BGMclip = enemy.BGMclip;
@@ -149,7 +151,6 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
             }
 
             Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)), enemyData.getString(9).charAt(0),enemyData.getString(10), enemyData.getString(11));
-
             return new Enemy(enemy);
         } catch (SQLException ex) {
 
@@ -258,27 +259,56 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
     }
 
     public String respondToTalk(boolean isGood, Database database){
-        if(isGood){ 
-            try {
-                int randomNumber = rand.nextInt(database.fetchData("select count(*) from MaleBossEnemyDialogues where IsGood = true").getInt(1)) + 1;
-				ResultSet dialogue = database.fetchData(" select *from MaleBossEnemyDialogues where DialogueID = " + randomNumber);
-
-                return dialogue.getString(2);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        if(this.gender.equals('F')){
+            System.out.println("Female");
+            if(isGood){ 
+                try {
+                    int randomNumber =  database.fetchData("select DialogueID from FemaleBossEnemyDialogues where IsGood = true ORDER BY RAND() LIMIT 1").getInt(1);
+                    
+                    ResultSet dialogue = database.fetchData("select *from FemaleBossEnemyDialogues where DialogueID =" + randomNumber);
+    
+                    return dialogue.getString(2);
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }else{
+                try {
+                    int randomNumber =  database.fetchData("select DialogueID from FemaleBossEnemyDialogues where IsGood = false ORDER BY RAND() LIMIT 1").getInt(1);
+                    
+                    ResultSet dialogue = database.fetchData("select *from FemaleBossEnemyDialogues where DialogueID =" + randomNumber);
+    
+                    return dialogue.getString(2);
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
         }else{
-            try {
-                int randomNumber = rand.nextInt(database.fetchData("select count(*) from MaleBossEnemyDialogues where IsGood = false").getInt(1)) + 1;
-				ResultSet dialogue = database.fetchData(" select *from MaleBossEnemyDialogues where DialogueID = " + randomNumber);
-
-                return dialogue.getString(2);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+            if(isGood){ 
+                try {
+                    int randomNumber =  database.fetchData("select DialogueID from MaleBossEnemyDialogues where IsGood = true ORDER BY RAND() LIMIT 1").getInt(1);
+                    
+                    ResultSet dialogue = database.fetchData("select *from MaleBossEnemyDialogues where DialogueID =" + randomNumber);
+    
+                    return dialogue.getString(2);
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }else{
+                try {
+                    int randomNumber =  database.fetchData("select DialogueID from MaleBossEnemyDialogues where IsGood = false ORDER BY RAND() LIMIT 1").getInt(1);
+                    
+                    ResultSet dialogue = database.fetchData("select *from MaleBossEnemyDialogues where DialogueID =" + randomNumber);
+                    return dialogue.getString(2);
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
         }
+       
         return null;
     }
 

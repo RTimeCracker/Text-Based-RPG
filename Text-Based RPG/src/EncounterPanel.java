@@ -61,9 +61,12 @@ public class EncounterPanel extends JLayeredPane{
 
     BackgroundPanel backgroundPanel;
 
-    public EncounterPanel(MainFrame frame, Player player){
+    Database database;
+
+    public EncounterPanel(MainFrame frame, Player player, Database database){
         this.frame = frame;
         this.player = player;
+        this.database = database;
         this.setLayout(null);
 
         setPanelBox();
@@ -372,7 +375,7 @@ public class EncounterPanel extends JLayeredPane{
         String[] playerTalkTexts = {playerText.replaceAll("<html>", "").replaceAll("</html>", "")};
         playerDialogueTexts = playerTalkTexts;
 
-        String[] enemyBadTalkTexts = {"Ill kill you!", player.currentEnemy.name + " attacked you."};
+        String[] enemyBadTalkTexts = {player.currentEnemy.respondToTalk(false, database), player.currentEnemy.name + " attacked you."};
         enemyDialogueTexts = enemyBadTalkTexts;
 
         labelDialogue.setText(playerTalkTexts[0]);
@@ -388,7 +391,7 @@ public class EncounterPanel extends JLayeredPane{
         String[] playerTalkTexts = {playerText.replaceAll("<html>", "").replaceAll("</html>", "")};
         playerDialogueTexts = playerTalkTexts;
 
-        String[] enemyGoodTalkTexts = {"Arigatou", player.currentEnemy.name + " attacked you."};
+        String[] enemyGoodTalkTexts = {player.currentEnemy.respondToTalk(true, database), player.currentEnemy.name + " attacked you."};
         enemyDialogueTexts = enemyGoodTalkTexts;
 
         labelDialogue.setText(playerTalkTexts[0]);

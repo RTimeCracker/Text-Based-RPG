@@ -136,7 +136,7 @@ public class MainFrame extends JFrame{
 
 
     public void initEncounterPanel(){
-        encounterPanel = new EncounterPanel(this,player);
+        encounterPanel = new EncounterPanel(this,player,database);
 
         this.add(encounterPanel);
         mainPanel.add(encounterPanel, "EncounterPanel");
