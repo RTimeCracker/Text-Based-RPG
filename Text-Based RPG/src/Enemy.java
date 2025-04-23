@@ -97,6 +97,7 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
             this.BGMclip = enemy.BGMclip;
         }
         
+        
         PlayMusic(musicFile, BGMclip);
         loadEnemyImage();
         
@@ -144,7 +145,7 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
             ResultSet enemyData = database.fetchData("select * from bossenemy where EnemyID = " + randomNumber);
             if(enemyData.getString(11) == null){
                 Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)), enemyData.getString(9).charAt(0),enemyData.getString(10));
-                return  enemy;
+                return new Enemy(enemy);
             }
 
             Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)), enemyData.getString(9).charAt(0),enemyData.getString(10), enemyData.getString(11));
