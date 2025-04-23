@@ -249,10 +249,10 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
     }
     
     public void decreaseHearts(int amount){
-        if(amount > 5){
-            hearts = 5;
-        }else{
+        if(hearts > 0 && amount <= 5){
             hearts -= amount;
+        }else{
+            hearts = 0;
         }
     }
 
