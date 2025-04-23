@@ -61,9 +61,12 @@ public class EncounterPanel extends JLayeredPane{
 
     BackgroundPanel backgroundPanel;
 
-    public EncounterPanel(MainFrame frame, Player player){
+    Database database;
+
+    public EncounterPanel(MainFrame frame, Player player, Database database){
         this.frame = frame;
         this.player = player;
+        this.database = database;
         this.setLayout(null);
 
         setPanelBox();
@@ -372,7 +375,7 @@ public class EncounterPanel extends JLayeredPane{
         String[] playerTalkTexts = {playerText.replaceAll("<html>", "").replaceAll("</html>", "")};
         playerDialogueTexts = playerTalkTexts;
 
-        String[] enemyBadTalkTexts = {"Ill kill you!", player.currentEnemy.name + " attacked you."};
+        String[] enemyBadTalkTexts = {player.currentEnemy.respondToTalk(false, database), player.currentEnemy.name + " attacked you."};
         enemyDialogueTexts = enemyBadTalkTexts;
 
         labelDialogue.setText(playerTalkTexts[0]);
@@ -388,7 +391,7 @@ public class EncounterPanel extends JLayeredPane{
         String[] playerTalkTexts = {playerText.replaceAll("<html>", "").replaceAll("</html>", "")};
         playerDialogueTexts = playerTalkTexts;
 
-        String[] enemyGoodTalkTexts = {"Arigatou", player.currentEnemy.name + " attacked you."};
+        String[] enemyGoodTalkTexts = {player.currentEnemy.respondToTalk(true, database), player.currentEnemy.name + " attacked you."};
         enemyDialogueTexts = enemyGoodTalkTexts;
 
         labelDialogue.setText(playerTalkTexts[0]);
@@ -497,30 +500,33 @@ public class EncounterPanel extends JLayeredPane{
         enemyLabel.setHorizontalAlignment(JLabel.CENTER);
         enemyLabel.setVerticalAlignment(JLabel.CENTER);
 
-        heartContainer = new JPanel();
+        if(player.zone.zoneType == ZoneType.Dungeon){
+            heartContainer = new JPanel();
 
-        heartContainer.setBounds(enemyLabel.getX() - (enemyLabel.getWidth() - 250) / 2,enemyLabel.getHeight() - enemyLabel.getY(), 250, 60);
-        heartContainer.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 5));
-        heartContainer.setVisible(true);
-        heartContainer.setOpaque(false);
-
-       
-        try {
-            ImageIcon heartIcon = new ImageIcon(ImageIO.read(new File("Text-Based RPG\\Images\\EmptyHeart.png")).getScaledInstance((heartContainer.getWidth()/5) - 4, 50, Image.SCALE_SMOOTH));
-            
-            heartContainer.removeAll();
-            for(JLabel heart : hearts){
-                heart.setIcon(heartIcon);
-                heartContainer.add(heart);
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+            heartContainer.setBounds(enemyLabel.getX() - (enemyLabel.getWidth() - 250) / 2,enemyLabel.getHeight() - enemyLabel.getY(), 250, 60);
+            heartContainer.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 5));
+            heartContainer.setVisible(true);
+            heartContainer.setOpaque(false);
 
         
+            try {
+                ImageIcon heartIcon = new ImageIcon(ImageIO.read(new File("Text-Based RPG\\Images\\EmptyHeart.png")).getScaledInstance((heartContainer.getWidth()/5) - 4, 50, Image.SCALE_SMOOTH));
+                
+                heartContainer.removeAll();
+                for(JLabel heart : hearts){
+                    heart.setIcon(heartIcon);
+                    heartContainer.add(heart);
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
-        this.add(heartContainer, Integer.valueOf(1));
+            this.add(heartContainer, Integer.valueOf(1));
+        }
+        
+
+       
         this.add(enemyLabel, Integer.valueOf(1));
         // Force UI update
         this.revalidate();
@@ -566,6 +572,7 @@ public class EncounterPanel extends JLayeredPane{
             talkButton.setFocusPainted(true);
             talkButton.setText("Talk");
             talkButton.setEnabled(true);
+
         }else{
             talkButton.setOpaque(false);
             talkButton.setContentAreaFilled(false);
@@ -573,6 +580,7 @@ public class EncounterPanel extends JLayeredPane{
             talkButton.setFocusPainted(false);
             talkButton.setText("");
             talkButton.setEnabled(false);
+
         }
 
         panelCardLayout.show(panelBox, "PanelOptions");
