@@ -1,8 +1,8 @@
 import java.awt.*;
 import javax.swing.*;
 
-public class EndingRetryPanel extends JPanel {
-    public EndingRetryPanel(MainFrame frame, JPanel mainPanel, CardLayout cardLayout) {
+public class RetryPanel extends JPanel {
+    public RetryPanel(MainFrame frame, JPanel mainPanel, CardLayout cardLayout) {
         setLayout(null);
         setBackground(Color.BLACK);
 

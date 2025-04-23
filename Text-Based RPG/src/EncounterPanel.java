@@ -3,11 +3,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -462,7 +461,7 @@ public class EncounterPanel extends JLayeredPane{
             enemyLabel.setText("<html><body style='text-align:center;'>HP: "+ player.currentEnemy.hp +"<br>"+ player.currentEnemy.name +"</body></html>");
         } else {
             if (player.hp <= 0) {
-                frame.updateGameState(MainFrame.GameState.Ending);
+                frame.updateGameState(MainFrame.GameState.Retry);
             } else if (player.currentEnemy.hp <= 0) {
                 player.currentEnemy.onDeath(player);
                 reSetup();
