@@ -28,26 +28,14 @@ public class Enemy extends Entity {
     private Character gender;
     private int hearts = 0;
 
-    // Boss enemies
-/*private static List<Enemy> BOSSES = List.of(
-    new Enemy(List.of(Item.HealingPotion.maxPotion()), "Dragon Lanz", 500, 100, 50, 30, 20, EntityClass.Tank, "Text-Based RPG\\Images\\Enemy\\LanzEnemy.png", "Text-Based RPG\\Music\\Lanz_s theme (Boss theme).WAV"),
-    new Enemy(List.of(Item.BuffPotion.mindJuice()), "Dark Mage Clark", 300, 40, 30, 150, 50, EntityClass.Mage, "Text-Based RPG\\Images\\Enemy\\ClarkEnemy.png", "Text-Based RPG\\Music\\Kenneth_s theme (Boss theme).WAV"),
-    new Enemy(List.of(Item.CureItem.remedy()), "Demon King Orit", 800, 120, 80, 60, 40, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\OritEnemy.png", "Text-Based RPG\\Music\\Leo_s theme (Boss Theme).WAV"),
-    new Enemy(List.of(Item.HealingPotion.maxPotion()), "Sung Jin Who?", 700, 90, 70, 100, 60, EntityClass.Summoner, "Text-Based RPG\\Images\\Enemy\\RyanEnemy.png", "Text-Based RPG\\Music\\Ryans theme (Boss theme).WAV"),
-    new Enemy(List.of(Item.HealingPotion.maxPotion()), "Sion The Fell Omen", 600, 50, 50, 30, 30, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\SionEnemy.png"),
-    new Enemy(List.of(Item.HybridPotion.highElixir()), "Heavenly Demon King Khervin", 1000, 100, 100, 100, 100, EntityClass.Mage, "Text-Based RPG\\Images\\Enemy\\KhervinEnemy.png")
-);
-
-
-// Regular enemies
-private static List<Enemy> REGULAR_ENEMIES = List.of(
-    new Enemy(new ArrayList<>(), "Goblin", 100, 30, 10, 5, 5, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\GoblinEnemy.gif"),
-    new Enemy(new ArrayList<>(), "Wolf", 80, 40, 5, 0, 0, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\Spice-And-Wolf.png"),
-    new Enemy(new ArrayList<>(), "Slime", 50, 20, 2, 10, 10, EntityClass.Warrior, "Text-Based RPG\\Images\\Enemy\\Slime.png")
-);*/
+    public boolean hasTaunted;
 
     public Enemy(List<Item> itemDrop, String name, int hp, int atk, int def, int matk, int mdef, EntityClass entityClass, String imagePath) {
         super(name, hp, atk, def, 0, matk, mdef, entityClass);
+        this.level = rand.nextInt(5) + 1; // Random level 1-5
+        this.maxHp = hp * level;
+        this.hp = this.maxHp;
+        this.atk = atk * level;
         this.itemDrop = itemDrop;
         this.imagePath = imagePath;
         this.defaultMusicFile = new File("Text-Based RPG\\Music\\In combat music.WAV");
@@ -227,7 +215,8 @@ private static List<Enemy> REGULAR_ENEMIES = List.of(
     }
 
     public void onDeath(Player player){
-        player.addExp(50);
+        int expGain = 50 * this.level; // Scale EXP with enemy level
+        player.addExp(expGain);
         StopMusic(BGMclip);
     }
 

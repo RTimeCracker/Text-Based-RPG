@@ -6,7 +6,7 @@ public abstract class Entity {
     // Basic Info
     protected String name;
     protected EntityClass entityClass;
-    protected int level;
+    protected int level = 1;
     
     // Physical Stats
     protected int hp;
@@ -77,10 +77,13 @@ public abstract class Entity {
     }
 
     // Stat Methods
+    public int getAtk() { return atk; }
+    public int getDef() { return def; }
     public int getMatk() { return matk; }
     public int getMdef() { return mdef; }
     public int getMaxHp() { return maxHp; }
     public int getMaxMp() { return maxMp; }
+    
     
     public void restoreHp(int amount) {
         this.hp = Math.min(this.hp + amount, this.maxHp);
@@ -97,5 +100,9 @@ public abstract class Entity {
     
     public int calculateMagicDamage(int enemyMdef) {
         return Math.max(1, this.matk - enemyMdef / 2);
+    }
+
+    public int getLevel() { 
+        return level; 
     }
 }

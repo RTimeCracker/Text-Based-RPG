@@ -17,6 +17,7 @@ public class EncounterPanel extends JLayeredPane{
     Player player;
 
     JLabel enemyLabel;
+    JLabel expLabel;
 
     JPanel panelBox;
     JPanel panelOptions;
@@ -35,6 +36,7 @@ public class EncounterPanel extends JLayeredPane{
     JButton talkButton;
     JButton talkChoice1;
     JButton talkChoice2;
+    JButton skillsButton;
 
     JTextArea labelDialogue;
 
@@ -42,20 +44,24 @@ public class EncounterPanel extends JLayeredPane{
 
     JScrollPane scrollPaneInventoryContents;
 
+    // Dialogue tracking
     String[] playerDialogueTexts;
     int playerDialogueCount;
-
     String[] enemyDialogueTexts;
     int enemyDialogueCount;
 
+    // Layout managers
     CardLayout panelCardLayout = new CardLayout();
     CardLayout talkingCardLayout = new CardLayout();
 
+    // Status displays
     JLabel HP;
     JLabel LVL;
     JLabel[] hearts = {new JLabel(), new JLabel(), new JLabel(), new JLabel(), new JLabel()};
     JLabel askingOutLabel;
 
+
+    // Combat state
     boolean isEnemyTurn = false;
     boolean enemyAttacked = false;
 
@@ -66,7 +72,12 @@ public class EncounterPanel extends JLayeredPane{
         this.player = player;
         this.setLayout(null);
 
+        panelStatus = new JPanel();
+        panelOptions = new JPanel();
+
         setPanelBox();
+
+        player.setFrame(frame);
     }
 
     private void setPanelBox(){
@@ -91,6 +102,10 @@ public class EncounterPanel extends JLayeredPane{
                 onDialoguePanelClick();
             }
         });
+
+        expLabel = new JLabel("EXP: " + player.getExp() + "/" + player.getExpToNextLevel());
+        expLabel.setFont(new Font("Roboto",Font.BOLD,16));
+        panelStatus.add(expLabel);
 
         JPanel panelDialogueContainer = new JPanel();
         panelDialogueContainer.setBounds(0, 0, 750, 200);
@@ -325,7 +340,26 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     private void onSkillsButtonClick(){
+        JPanel skillsPanel = new JPanel();
+        skillsPanel.setLayout(new BoxLayout(skillsPanel, BoxLayout.Y_AXIS));
+        
+        for(Skill skill : player.getUnlockedSkills()) {
+            JButton skillButton = new JButton(skill.getName() + " (" + skill.getMpCost() + " MP)");
+            skillButton.addActionListener(e -> useSkill(skill));
+            skillsPanel.add(skillButton);
+        }
+        JOptionPane.showMessageDialog(this, skillsPanel, "Skills", JOptionPane.PLAIN_MESSAGE);
+    }
 
+    private void useSkill(Skill skill) {
+        if(player.mp >= skill.getMpCost()) {
+            player.mp -= skill.getMpCost();
+            skill.use(player, player.currentEnemy);
+            update();
+        } else {
+            labelDialogue.setText("Not enough MP!");
+            panelCardLayout.show(panelBox, "PanelDialogue");
+        }
     }
 
     private void onTalkButtonClick(){
@@ -462,6 +496,7 @@ public class EncounterPanel extends JLayeredPane{
             panelCardLayout.show(panelBox, "PanelDialogue");
         }
     }
+    
 
     private void onInventoryExitButtonClick(){
         panelCardLayout.show(panelBox, "PanelOptions");
@@ -475,6 +510,10 @@ public class EncounterPanel extends JLayeredPane{
         enemyLabel.setBounds(275, 25, 250, 400);
         enemyLabel.setLayout(null);
         enemyLabel.setVisible(true);
+        enemyLabel.setText("<html><div style='text-align:center;'>" +
+                     player.currentEnemy.name + "<br>" +
+                     "Lvl: " + player.currentEnemy.level + "<br>" +
+                     "HP: " + player.currentEnemy.hp + "</div></html>");
     
         if(player.currentEnemy.getEnemyImage() != null){
             enemyLabel.setIcon(new ImageIcon(player.currentEnemy.getEnemyImage()));
@@ -610,6 +649,8 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     public void update(){
+        expLabel.setText("EXP: " + player.getExp() + "/" + player.getExpToNextLevel());
+        HP.setText("HP: " + player.hp + "/" + player.maxHp);
         if (player.hp > 0 && player.currentEnemy.hp > 0) {
             HP.setText("HP: " + player.hp + "/" + player.maxHp);
             enemyLabel.setText("<html><body style='text-align:center;'>HP: "+ player.currentEnemy.hp +"<br>"+ player.currentEnemy.name +"</body></html>");

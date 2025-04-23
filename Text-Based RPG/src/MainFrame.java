@@ -105,9 +105,6 @@ public class MainFrame extends JFrame{
             encounterPanel.reSetup();
         }
     }
-
-   
-
  
     
     private void initMainMenu() throws IOException{
