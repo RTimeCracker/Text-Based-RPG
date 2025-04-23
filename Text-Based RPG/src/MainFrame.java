@@ -12,7 +12,7 @@ public class MainFrame extends JFrame{
     final int SCREENHEIGHT = 700;
 
     public enum GameState{
-        MainMenu, Introduction, Exploration, Encounter, Village, Ending
+        MainMenu, Introduction, Exploration, Encounter, Village, Retry
     }
 
     GameState currentGameState = GameState.MainMenu;
@@ -29,7 +29,8 @@ public class MainFrame extends JFrame{
     ExplorationPanel explorationPanel;
     EncounterPanel encounterPanel;
     VillagePanel villagePanel;
-    EndingRetryPanel endingPanel;
+    RetryPanel retryPanel;
+    VictoryPanel victoryPanel;
 
     String[] introductionDialogues = {"Welcome Vaiken: Last Legacy", "A game where you can explore, fight enemies, and gather loot!", "classchoice", "namechoice"};
     
@@ -57,7 +58,7 @@ public class MainFrame extends JFrame{
 
         initMainMenu();
         initIntroductionInterface();
-        initEndingPanel();
+        initRetryPanel();
 
         this.add(mainPanel);
 
@@ -89,10 +90,10 @@ public class MainFrame extends JFrame{
                 switchPanel("VillagePanel");
                 PlayMusic(villageMusicFile, BGMClip);
                 break;
-            case Ending:
-                switchPanel("EndingPanel");
-                StopMusic(BGMClip);
-                break;   
+            case Retry:
+                switchPanel("RetryPanel"); 
+                StopMusic(BGMClip);   
+                break;  
             
         }
     }
@@ -128,9 +129,9 @@ public class MainFrame extends JFrame{
 
     }
 
-    public void initEndingPanel() {
-        endingPanel = new EndingRetryPanel(this, mainPanel, cardLayout);
-        mainPanel.add(endingPanel, "EndingPanel");
+    public void initRetryPanel() {
+        retryPanel = new RetryPanel(this, mainPanel, cardLayout);
+        mainPanel.add(retryPanel, "RetryPanel");
     }
 
 
@@ -182,16 +183,13 @@ public class MainFrame extends JFrame{
 
     public static void StopMusic(Clip clip){
         try {
-            
-            if(clip != null){
-                if(clip.isOpen()){
-                    clip.stop();
-                }
-            }else{
-                System.out.println("Can't find file.");
+            if (clip != null && clip.isOpen()) {
+                clip.stop();
+                clip.flush();
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Error stopping music: " + e.getMessage());
         }
     }
+
 }

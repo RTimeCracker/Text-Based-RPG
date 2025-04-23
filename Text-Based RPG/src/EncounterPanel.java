@@ -620,7 +620,7 @@ public class EncounterPanel extends JLayeredPane{
             enemyLabel.setText("<html><body style='text-align:center;'>HP: "+ player.currentEnemy.hp +"<br>"+ player.currentEnemy.name +"</body></html>");
         } else {
             if (player.hp <= 0) {
-                frame.updateGameState(MainFrame.GameState.Ending);
+                frame.updateGameState(MainFrame.GameState.Retry);
             } else if (player.currentEnemy.hp <= 0) {
                 player.currentEnemy.onDeath(player);
                 reSetup();
