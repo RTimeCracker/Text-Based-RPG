@@ -119,6 +119,14 @@ public class Player extends Entity {
         }
     }
 
+    private int mainBossesDefeated = 0;
+
+    public void defeatMainBoss() {
+    mainBossesDefeated++;
+    if (mainBossesDefeated >= 3 && frame != null) {
+        frame.updateGameState(MainFrame.GameState.Victory);}
+    }
+
     public void levelUp() {
         level++;
         exp -= expToNextLevel;
@@ -209,6 +217,7 @@ public class Player extends Entity {
     public void useItem(Item item) {
         item.use(this);
     }
+
 
     public static void PlayMusic(File musicPath, Clip clip) {
         try {
