@@ -467,6 +467,12 @@ public class EncounterPanel extends JLayeredPane{
         panelCardLayout.show(panelBox, "PanelOptions");
     }
 
+
+
+    
+
+
+
     public void setEnemy() {
         if (enemyLabel != null) {
             this.remove(enemyLabel);

@@ -12,7 +12,7 @@ public class MainFrame extends JFrame{
     final int SCREENHEIGHT = 700;
 
     public enum GameState{
-        MainMenu, Introduction, Exploration, Encounter, Village, Retry
+        MainMenu, Introduction, Exploration, Encounter, Village, Retry, Victory
     }
 
     GameState currentGameState = GameState.MainMenu;
@@ -59,6 +59,8 @@ public class MainFrame extends JFrame{
         initMainMenu();
         initIntroductionInterface();
         initRetryPanel();
+        initVictoryPanel();
+
 
         this.add(mainPanel);
 
@@ -75,8 +77,7 @@ public class MainFrame extends JFrame{
                 PlayMusic(menuMusicFile, BGMClip);
                 break;
             case Introduction:
-                switchPanel("IntroductionPanel");
-                
+                switchPanel("IntroductionPanel");    
                 break;
             case Exploration:
                 switchPanel("ExplorationPanel");
@@ -94,6 +95,9 @@ public class MainFrame extends JFrame{
                 switchPanel("RetryPanel"); 
                 StopMusic(BGMClip);   
                 break;  
+            case Victory:
+                switchPanel("VictoryPanel");;;;;;;;;;;;;;;;;;;;;;;;;
+                break;   
             
         }
     }
@@ -127,6 +131,11 @@ public class MainFrame extends JFrame{
         mainPanel.add(explorationPanel, "ExplorationPanel");
         player.setFrame(this);
 
+    }
+
+    public void initVictoryPanel(){
+        victoryPanel = new VictoryPanel(this, player);  
+        mainPanel.add(victoryPanel, "VictoryPanel");
     }
 
     public void initRetryPanel() {
