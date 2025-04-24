@@ -249,7 +249,6 @@ public class Enemy extends Entity {
 
     public String respondToTalk(boolean isGood, Database database){
         if(this.gender.equals('F')){
-            System.out.println("Female");
             if(isGood){ 
                 try {
                     int randomNumber =  database.fetchData("select DialogueID from FemaleBossEnemyDialogues where IsGood = true ORDER BY RAND() LIMIT 1").getInt(1);

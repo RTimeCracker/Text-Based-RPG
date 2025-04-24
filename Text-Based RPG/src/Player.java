@@ -30,6 +30,9 @@ public class Player extends Entity {
     private Clip SFXClip;
     public Enemy currentEnemy;
 
+    public int bossEnemyDefeatedCount = 0;
+    public int regularEnemyDefeatedCount = 0;
+
     public ArrayList<String> GoodDialogue = new ArrayList<>(Arrays.asList(
         "Hey, I just wanted to tell you that your clothing looks really good on you and fits your whole vibe.",
         "Hii, your hair looks really good and smells like a field surrounded by beautiful and vibrant flowers.",
@@ -169,8 +172,18 @@ public class Player extends Entity {
     private void changeZone() {
         Zone existingZone = Zone.getZoneFromPosition(this.xPos, this.yPos);
         if (existingZone == null) {
-            ZoneType[] zoneTypes = ZoneType.values();
-            ZoneType randomType = zoneTypes[random.nextInt(zoneTypes.length)];
+            List<ZoneType> zoneTypes = new ArrayList(Arrays.asList(ZoneType.values()));
+
+            if(this.regularEnemyDefeatedCount < 5){
+                zoneTypes.removeAll(zoneTypes);
+                for(ZoneType z : ZoneType.values()){
+                    if(z != ZoneType.Dungeon){
+                        zoneTypes.add(z);
+                    }
+                }
+
+            }
+            ZoneType randomType = zoneTypes.get(random.nextInt(zoneTypes.size()));
             this.zone = new Zone(randomType, this.xPos, this.yPos);
             App.displayNewZoneDiscovery(randomType.toString());
         } else {

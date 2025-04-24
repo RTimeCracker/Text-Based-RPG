@@ -388,8 +388,7 @@ public class EncounterPanel extends JLayeredPane{
     
             talkChoice1.setText("<html>" + dialogues.get(0) + "</html>");
             talkChoice2.setText("<html>" + dialogues.get(1) + "</html>");
-    
-            System.out.println(badDialogue);
+
             if(talkChoice1.getText().replaceAll("<html>", "").replaceAll("</html>", "").equals(badDialogue)){
                 talkChoice1.addActionListener(e -> onBadTalkButtonClick(talkChoice1.getText()));
                 talkChoice2.addActionListener(e -> onGoodTalkButtonClick(talkChoice2.getText()));
@@ -515,6 +514,11 @@ public class EncounterPanel extends JLayeredPane{
         if (enemyLabel != null) {
             this.remove(enemyLabel);
         }
+
+        if(heartContainer != null){
+            this.remove(heartContainer);
+        }
+
         enemyLabel = new JLabel();
         enemyLabel.setBounds(275, 25, 250, 400);
         enemyLabel.setLayout(null);
@@ -673,6 +677,11 @@ public class EncounterPanel extends JLayeredPane{
                 frame.updateGameState(MainFrame.GameState.Retry);
             } else if (player.currentEnemy.hp <= 0) {
                 player.currentEnemy.onDeath(player);
+                if(player.zone.zoneType == ZoneType.Dungeon){
+                    player.bossEnemyDefeatedCount++;
+                }else if(player.zone.zoneType == ZoneType.Encounter){
+                    player.regularEnemyDefeatedCount++;
+                }
                 reSetup();
                 frame.updateGameState(MainFrame.GameState.Exploration);
             }
