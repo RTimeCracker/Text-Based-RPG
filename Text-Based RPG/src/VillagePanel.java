@@ -14,7 +14,7 @@ public class VillagePanel extends JLayeredPane {
         this.setSize(new Dimension(frame.SCREENWIDTH, frame.SCREENHEIGHT));
         this.setLayout(null);
         
-        setupBackground();
+        
         setupUI();
     }
     
@@ -62,6 +62,7 @@ public class VillagePanel extends JLayeredPane {
         this.add(buyButton, Integer.valueOf(2));
         this.add(sellButton, Integer.valueOf(2));
         this.add(leaveButton, Integer.valueOf(2));
+        setupBackground();
     }
     
     private JButton createButton(String text, int x, int y) {
@@ -130,7 +131,7 @@ public class VillagePanel extends JLayeredPane {
         
         JButton backButton = createButton("Back", 580, 400);
         backButton.addActionListener(e -> {
-            removeAll();
+            this.removeAll();
             setupUI();
             repaint();
         });

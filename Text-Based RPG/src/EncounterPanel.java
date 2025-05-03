@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class EncounterPanel extends JLayeredPane{
     // Status displays
     JLabel HP;
     JLabel LVL;
-    JLabel[] hearts = {new JLabel(), new JLabel(), new JLabel(), new JLabel(), new JLabel()};
+    JLabel[] hearts = {new JLabel(), new JLabel(), new JLabel(), new JLabel(), new JLabel()}; 
     JLabel askingOutLabel;
 
 
@@ -102,7 +103,7 @@ public class EncounterPanel extends JLayeredPane{
         panelDialogue.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                onDialoguePanelClick();
+                onBattleDialoguePanelClick();
             }
         });
 
@@ -118,7 +119,7 @@ public class EncounterPanel extends JLayeredPane{
         labelDialogue.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                onDialoguePanelClick();
+                onBattleDialoguePanelClick();
             }
         });
         labelDialogue.setLineWrap(true);
@@ -297,7 +298,7 @@ public class EncounterPanel extends JLayeredPane{
         this.add(panelBox, Integer.valueOf(1));
     }
 
-    private void onDialoguePanelClick(){    
+    private void onBattleDialoguePanelClick(){    
         
         if(playerDialogueCount <= playerDialogueTexts.length - 1){
             labelDialogue.setText(playerDialogueTexts[playerDialogueCount]);
@@ -314,6 +315,37 @@ public class EncounterPanel extends JLayeredPane{
                     player.currentEnemy.attackCommand(player);
                     enemyAttacked = true;
                     update();
+                } 
+                enemyDialogueCount++;
+            }else{
+                isEnemyTurn = false;
+                enemyAttacked = false;
+                panelCardLayout.show(panelBox, "PanelOptions");
+            }
+        }
+        
+    }
+
+    private void onRomancingDialoguePanelClick(){    
+        
+        if(playerDialogueCount <= playerDialogueTexts.length - 1){
+            labelDialogue.setText(playerDialogueTexts[playerDialogueCount]);
+            playerDialogueCount++;
+        }else{
+            
+            if(isEnemyTurn == false){
+                enemyTurn();
+            }
+            
+            if(enemyDialogueCount <= enemyDialogueTexts.length - 1){
+                labelDialogue.setText(enemyDialogueTexts[enemyDialogueCount]);
+                if(enemyAttacked == false && enemyDialogueCount >= enemyDialogueTexts.length - 1){
+                    player.currentEnemy.attackCommand(player);
+                    enemyAttacked = true;
+                    update();
+                } 
+                if(enemyDialogueCount == 0){
+                    player.currentEnemy.playDialogueSFX();
                 }
                 enemyDialogueCount++;
             }else{
@@ -323,11 +355,30 @@ public class EncounterPanel extends JLayeredPane{
             }
         }
         
-       
-
     }
 
     private void onAttackButtonClick(){
+        //Remove actionListeners of related DialoguePanel Components
+        for(MouseListener ml : panelDialogue.getMouseListeners()){
+            panelDialogue.removeMouseListener(ml);
+        }
+        for(MouseListener ml : labelDialogue.getMouseListeners()){
+            labelDialogue.removeMouseListener(ml);
+        }
+        panelDialogue.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                onBattleDialoguePanelClick();
+            }
+        });
+
+        labelDialogue.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                onBattleDialoguePanelClick();
+            }
+        });
+
         String[] playerAttackTexts = {"Attacked Enemy!"};
         playerDialogueTexts = playerAttackTexts;
         String[] enemyAttackText = {player.currentEnemy.name + " attacked you."};
@@ -405,6 +456,27 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     private void onBadTalkButtonClick(String playerText){
+        //Remove actionListeners of related DialoguePanel Components
+        for(MouseListener ml : panelDialogue.getMouseListeners()){
+            panelDialogue.removeMouseListener(ml);
+        }
+        for(MouseListener ml : labelDialogue.getMouseListeners()){
+            labelDialogue.removeMouseListener(ml);
+        }
+        panelDialogue.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                onRomancingDialoguePanelClick();
+            }
+        });
+
+        labelDialogue.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                onRomancingDialoguePanelClick();
+            }
+        });
+
         String[] playerTalkTexts = {playerText.replaceAll("<html>", "").replaceAll("</html>", "")};
         playerDialogueTexts = playerTalkTexts;
 
@@ -421,6 +493,27 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     private void onGoodTalkButtonClick(String playerText){
+        //Remove actionListeners of related DialoguePanel Components
+        for(MouseListener ml : panelDialogue.getMouseListeners()){
+            panelDialogue.removeMouseListener(ml);
+        }
+        for(MouseListener ml : labelDialogue.getMouseListeners()){
+            labelDialogue.removeMouseListener(ml);
+        }
+        panelDialogue.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                onRomancingDialoguePanelClick();
+            }
+        });
+
+        labelDialogue.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                onRomancingDialoguePanelClick();
+            }
+        });
+
         String[] playerTalkTexts = {playerText.replaceAll("<html>", "").replaceAll("</html>", "")};
         playerDialogueTexts = playerTalkTexts;
 

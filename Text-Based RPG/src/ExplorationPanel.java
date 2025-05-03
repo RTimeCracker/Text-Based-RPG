@@ -4,6 +4,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
 import javax.swing.*;
 
 public class ExplorationPanel extends JLayeredPane{
@@ -14,6 +18,9 @@ public class ExplorationPanel extends JLayeredPane{
     BackgroundPanel backgroundPanel;
     Player player;
     Database database;
+    private File currentlyPlayingSFX;
+    File footstepSFX = new File("Text-Based RPG\\SFX\\Footsteps.wav");
+    private Clip SFXClip;
 
     public ExplorationPanel(MainFrame frame, Player player, Database database) throws IOException{
         this.frame = frame;
@@ -26,6 +33,12 @@ public class ExplorationPanel extends JLayeredPane{
         setButtons();
         setDialogue();
         setCoordinates();
+        try {
+            SFXClip = AudioSystem.getClip();
+        } catch (LineUnavailableException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     private void setDialogue(){
@@ -52,6 +65,7 @@ public class ExplorationPanel extends JLayeredPane{
 
     private void onButtonClick(int x, int y) {
         player.move(x, y);
+        PlaySFX(footstepSFX, SFXClip);
 
         if (player.zone != null && player.zone.zoneType == ZoneType.Village) {
             frame.updateGameState(MainFrame.GameState.Village);
@@ -129,6 +143,30 @@ public class ExplorationPanel extends JLayeredPane{
     public void rePaint(){
         setBackground();
         coordinatesLabel.setText("X: " + player.xPos + " Y: " + player.yPos);
+    }
+
+    public void PlaySFX(File musicPath, Clip clip){
+        try {
+
+            if(musicPath.exists()){
+                if(clip.isOpen() && musicPath.equals(currentlyPlayingSFX)){
+                    clip.setFramePosition(0);
+                    clip.start();
+                    return;
+                }
+
+                clip.close();
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+
+                clip.open(audioInput);
+                clip.start();
+                this.currentlyPlayingSFX = musicPath;
+            }else{
+                System.out.println("Can't find file.");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
 
