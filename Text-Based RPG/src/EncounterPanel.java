@@ -327,7 +327,7 @@ public class EncounterPanel extends JLayeredPane{
     }
 
     private void onRomancingDialoguePanelClick(){    
-        
+        player.currentEnemy.stopDialogueSFX();
         if(playerDialogueCount <= playerDialogueTexts.length - 1){
             labelDialogue.setText(playerDialogueTexts[playerDialogueCount]);
             playerDialogueCount++;

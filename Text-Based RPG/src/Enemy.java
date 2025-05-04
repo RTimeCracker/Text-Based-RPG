@@ -134,7 +134,7 @@ public class Enemy extends Entity {
     public static Enemy generateBoss(Database database) {
         try {
             int randomNumber = rand.nextInt(database.fetchData("select count(*) from bossenemy").getInt(1)) + 1;
-            ResultSet enemyData = database.fetchData("select * from bossenemy where EnemyID = " + randomNumber);
+            ResultSet enemyData = database.fetchData("select * from bossenemy where EnemyID = " + 4);
 
             Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)), enemyData.getString(9).charAt(0),enemyData.getString(10));
             return new Enemy(enemy);
@@ -225,10 +225,7 @@ public class Enemy extends Entity {
         PlaySFX(attackSFX, SFXClip);
     }
 
-    public void playDialogueSFX(){
-        PlaySFX(this.dialogueSFX, SFXClip); 
-    }
-
+    
     public int getHearts(){
         return hearts;
     }
@@ -329,6 +326,15 @@ public class Enemy extends Entity {
         }
     }
 
+    public void playDialogueSFX(){
+        PlaySFX(this.dialogueSFX, SFXClip); 
+    }
+
+    public void stopDialogueSFX(){
+        StopSFX(SFXClip); 
+    }
+
+
     public void PlaySFX(File musicPath, Clip clip){
         try {
 
@@ -345,6 +351,22 @@ public class Enemy extends Entity {
                 clip.open(audioInput);
                 clip.start();
                 this.currentlyPlayingSFX = musicPath;
+            }else{
+                System.out.println("Can't find file.");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public void StopSFX(Clip clip){
+        try {
+
+    
+            if(clip != null){
+                if(clip.isOpen()){
+                    clip.stop();
+                }
             }else{
                 System.out.println("Can't find file.");
             }
