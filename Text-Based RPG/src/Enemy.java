@@ -134,7 +134,7 @@ public class Enemy extends Entity {
     public static Enemy generateBoss(Database database) {
         try {
             int randomNumber = rand.nextInt(database.fetchData("select count(*) from bossenemy").getInt(1)) + 1;
-            ResultSet enemyData = database.fetchData("select * from bossenemy where EnemyID = " + randomNumber);
+            ResultSet enemyData = database.fetchData("select * from bossenemy where EnemyID = " + 5);
 
             Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)), enemyData.getString(9).charAt(0),enemyData.getString(10));
             return new Enemy(enemy);
