@@ -19,9 +19,7 @@ public class Player extends Entity {
     public boolean hasWolfCompanion;
     public boolean hasPhoenixBuff;
     public boolean hasLastStand;
-    public List<Item> inventory = new ArrayList<>(Arrays.asList(
-        Item.HealingPotion.maxPotion(), Item.BuffPotion.mindJuice(), Item.HealingPotion.phoenixDown(), Item.DebuffPotion.poison()
-    ));
+    public List<Item> inventory;
     Zone zone;
     public int xPos = 0, yPos = 0;
     private static Random random = new Random();
@@ -29,6 +27,7 @@ public class Player extends Entity {
     private File attackSFX = new File("Text-Based RPG\\SFX\\Attack.wav");
     private Clip SFXClip;
     public Enemy currentEnemy;
+    private Database database;
 
     public int bossEnemyDefeatedCount = 0;
     public int regularEnemyDefeatedCount = 0;
@@ -55,6 +54,10 @@ public class Player extends Entity {
         this.skills = new ArrayList<>();
         this.unlockedSkills = new ArrayList<>();
         this.zone = new Zone(ZoneType.Village, 0, 0);
+        this.database = frame.database;
+        inventory = new ArrayList<>(Arrays.asList(
+            Item.HealingPotion.maxPotion(database), Item.BuffPotion.mindJuice(database), Item.HealingPotion.phoenixDown(database), Item.DebuffPotion.poison(database)
+        ));
         try {
             SFXClip = AudioSystem.getClip();
         } catch (LineUnavailableException ex) {

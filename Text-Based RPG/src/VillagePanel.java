@@ -7,10 +7,17 @@ public class VillagePanel extends JLayeredPane {
     private Player player;
     private JLabel goldLabel;
     private JTextArea dialogueArea;
-    
+    private  List<Item> SHOP_ITEMS;
     public VillagePanel(MainFrame frame, Player player) {
         this.frame = frame;
         this.player = player;
+        this.SHOP_ITEMS = List.of(Item.HealingPotion.potion(frame.database),
+        Item.HealingPotion.superPotion(frame.database),
+        Item.ManaPotion.lowlyFlask(frame.database),
+        Item.BuffPotion.protectPotion(frame.database),
+        Item.BuffPotion.shellPotion(frame.database),
+        Item.CureItem.antidote(frame.database),
+        Item.CureItem.remedy(frame.database));
         this.setSize(new Dimension(frame.SCREENWIDTH, frame.SCREENHEIGHT));
         this.setLayout(null);
         
@@ -113,7 +120,7 @@ public class VillagePanel extends JLayeredPane {
         scrollPane.getViewport().setOpaque(false);
         this.add(scrollPane, Integer.valueOf(2));
         
-        List<Item> items = isBuying ? Zone.SHOP_ITEMS : player.inventory;
+        List<Item> items = isBuying ? SHOP_ITEMS : player.inventory;
         
         if (items.isEmpty()) {
             JLabel emptyLabel = new JLabel(isBuying ? "No items available for purchase" : "Your inventory is empty!");

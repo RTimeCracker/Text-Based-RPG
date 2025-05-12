@@ -16,15 +16,7 @@ public class Zone {
     private MainFrame frame;
 
     // Sample items for shops
-    public static final List<Item> SHOP_ITEMS = List.of(
-        Item.HealingPotion.potion(),
-        Item.HealingPotion.superPotion(),
-        Item.ManaPotion.lowlyFlask(),
-        Item.BuffPotion.protectPotion(),
-        Item.BuffPotion.shellPotion(),
-        Item.CureItem.antidote(),
-        Item.CureItem.remedy()
-    );
+
 
     public Zone(ZoneType zoneType, int xPos, int yPos) {
         this.zoneType = zoneType;

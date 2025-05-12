@@ -136,7 +136,7 @@ public class Enemy extends Entity {
             int randomNumber = rand.nextInt(database.fetchData("select count(*) from bossenemy").getInt(1)) + 1;
             ResultSet enemyData = database.fetchData("select * from bossenemy where EnemyID = " + randomNumber);
 
-            Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)), enemyData.getString(9).charAt(0),enemyData.getString(10));
+            Enemy enemy = new Enemy(Arrays.asList(Item.HealingPotion.maxPotion(database)), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)), enemyData.getString(9).charAt(0),enemyData.getString(10));
             return new Enemy(enemy);
         } catch (SQLException ex) {
 
@@ -151,7 +151,7 @@ public class Enemy extends Entity {
             int randomNumber = rand.nextInt(database.fetchData("select count(*) from regularenemy").getInt(1)) + 1;
             System.out.println(randomNumber);
             ResultSet enemyData = database.fetchData("select * from regularenemy where regularenemyID = " + randomNumber);
-            Enemy enemy = new Enemy(List.of(Item.HealingPotion.maxPotion()), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)),enemyData.getString(9));
+            Enemy enemy = new Enemy(Arrays.asList(Item.HealingPotion.maxPotion(database)), enemyData.getString(2),enemyData.getInt(3), enemyData.getInt(4),enemyData.getInt(5), enemyData.getInt(6),enemyData.getInt(7),EntityClass.valueOf(enemyData.getString(8)),enemyData.getString(9));
             
             return new Enemy(enemy);
             

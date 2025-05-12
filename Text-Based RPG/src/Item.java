@@ -4,6 +4,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.imageio.ImageIO;
 
 public class Item {
@@ -30,31 +32,63 @@ public class Item {
     Image image;
     String imagePath;
 
+
+    public Item(Database database, int id) {
+       
+
+        try {
+            ResultSet rs = database.fetchData("Select * from item where ItemID = " + id);
+            this.name = rs.getString(2);
+            this.description = rs.getString(3);
+            this.hpRestore = rs.getInt(4);
+            this.mpRestore = rs.getInt(5);
+            this.isRevive = rs.getBoolean(6);
+            this.reviveAmount = rs.getInt(7);
+            this.grantsProtect = rs.getBoolean(8);
+            this.grantsShell = rs.getBoolean(9);
+            this.atkBoost = rs.getInt(10);
+            this.matkBoost = rs.getInt(11);
+            this.inflictsPoison = rs.getBoolean(12);
+            this.inflictsSilence = rs.getBoolean(13);
+            this.inflictsParalyze = rs.getBoolean(14);
+            this.curesPoison = rs.getBoolean(15);
+            this.curesSilence = rs.getBoolean(16);
+            this.curesParalyze = rs.getBoolean(17);
+            this.isRemedy = rs.getBoolean(18);
+            this.imagePath = rs.getString(19);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        loadItemImage();
+    }
+    
     public Item(String name, String description, int hpRestore, int mpRestore, 
         boolean isRevive, int reviveAmount, boolean grantsProtect, 
         boolean grantsShell, int atkBoost, int matkBoost, 
         boolean inflictsPoison, boolean inflictsSilence, 
         boolean inflictsParalyze, boolean curesPoison, 
         boolean curesSilence, boolean curesParalyze, boolean isRemedy, String imagePath) {
-        this.name = name;
-        this.description = description;
-        this.hpRestore = hpRestore;
-        this.mpRestore = mpRestore;
-        this.isRevive = isRevive;
-        this.reviveAmount = reviveAmount;
-        this.grantsProtect = grantsProtect;
-        this.grantsShell = grantsShell;
-        this.atkBoost = atkBoost;
-        this.matkBoost = matkBoost;
-        this.inflictsPoison = inflictsPoison;
-        this.inflictsSilence = inflictsSilence;
-        this.inflictsParalyze = inflictsParalyze;
-        this.curesPoison = curesPoison;
-        this.curesSilence = curesSilence;
-        this.curesParalyze = curesParalyze;
-        this.isRemedy = isRemedy;
-        this.imagePath = imagePath;
-        loadItemImage();
+            this.name = name;
+            this.description = description;
+            this.hpRestore = hpRestore;
+            this.mpRestore = mpRestore;
+            this.isRevive = isRevive;
+            this.reviveAmount = reviveAmount;
+            this.grantsProtect = grantsProtect;
+            this.grantsShell = grantsShell;
+            this.atkBoost = atkBoost;
+            this.matkBoost = matkBoost;
+            this.inflictsPoison = inflictsPoison;
+            this.inflictsSilence = inflictsSilence;
+            this.inflictsParalyze = inflictsParalyze;
+            this.curesPoison = curesPoison;
+            this.curesSilence = curesSilence;
+            this.curesParalyze = curesParalyze;
+            this.isRemedy = isRemedy;
+            this.imagePath = imagePath;
+            loadItemImage();
     }
 
     private void loadItemImage() {
@@ -148,145 +182,103 @@ public class Item {
 
     // Healing Potions
     public static class HealingPotion {
-        public static Item potion() {
-            return new Item("Potion", "Restores 50 HP.", 50, 0, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Potion.jpg");
+        public static Item potion(Database database) {
+            return new Item(database, 1);
         }
 
-        public static Item superPotion() {
-            return new Item("Super Potion", "Restores 150 HP.", 150, 0, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Super-Potion.jpg");
+        public static Item superPotion(Database database) {
+            return new Item(database, 2);
         }
 
-        public static Item maxPotion() {
-            return new Item("Max Potion", "Restores 250 HP.", 250, 0, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Max-Potion.jpg");
+        public static Item maxPotion(Database database) {
+            return new Item(database, 3);
         }
 
-        public static Item phoenixDown() {
-            return new Item("Phoenix Down", "Revives a KO'd unit with 10 HP.", 0, 0, 
-                          true, 10, false, false, 0, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Phoenix Down.jpg");
+        public static Item phoenixDown(Database database) {
+            return new Item(database, 4);
         }
     }
 
     // Mana Potions
     public static class ManaPotion {
-        public static Item lowlyFlask() {
-            return new Item("Lowly Flask of Tears", "Restores 20 MP.", 0, 20, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Lowly Flask of Tear.jpg");
+        public static Item lowlyFlask(Database database) {
+            return new Item(database, 5);
         }
 
-        public static Item greatFlask() {
-            return new Item("Great Flask of DemiGod Tears", "Restores 70 MP.", 0, 70, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Great Flask of DemiGod Tears.jpg");
+        public static Item greatFlask(Database database) {
+            return new Item(database, 6);
         }
 
-        public static Item absoluteFlask() {
-            return new Item("Absolute Flask of God Tears", "Restores 150 MP.", 0, 150, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Absolute Flask of God Tears.jpg");
+        public static Item absoluteFlask(Database database) {
+            return new Item(database, 7);
         }
     }
 
     // Hybrid Potions
     public static class HybridPotion {
-        public static Item lesserElixir() {
-            return new Item("Lesser Grade Elixir", "Restores HP and MP.", 50, 50, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Lesser Grade Elixir.jpg");
+        public static Item lesserElixir(Database database) {
+            return new Item(database, 8);
         }
 
-        public static Item midElixir() {
-            return new Item("Mid Grade Elixir", "Restores more HP and MP.", 100, 100, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Mid  Grade Elixir.jpg");
+        public static Item midElixir(Database database) {
+            return new Item(database, 9);
         }
 
-        public static Item highElixir() {
-            return new Item("High Grade Elixir", "Restores max HP and MP.", 200, 200, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\High Grade Elixir.jpg");
+        public static Item highElixir(Database database) {
+            return new Item(database, 10);
         }
     }
 
     // Buff Potions
     public static class BuffPotion {
-        public static Item protectPotion() {
-            return new Item("Protect Potion", "Reduces physical damage.", 0, 0, false, 0, 
-                          true, false, 0, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Protect Potion.jpg");
+        public static Item protectPotion(Database database) {
+            return new Item(database, 11);
         }
 
-        public static Item shellPotion() {
-            return new Item("Shell Potion", "Reduces magic damage.", 0, 0, false, 0, 
-                          false, true, 0, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Shell Potion.jpg");
+        public static Item shellPotion(Database database) {
+            return new Item(database, 12);
         }
 
-        public static Item powerJuice() {
-            return new Item("Power Juice", "Increases Attack.", 0, 0, false, 0, 
-                          false, false, 30, 0, false, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Power Juice.jpg");
+        public static Item powerJuice(Database database) {
+            return new Item(database, 13);
         }
 
-        public static Item mindJuice() {
-            return new Item("Mind Juice", "Increases Magic Power.", 0, 0, false, 0, 
-                          false, false, 0, 30, false, false, false, 
-                          false, false, false, false, "");
+        public static Item mindJuice(Database database) {
+            return new Item(database, 14);
         }
     }
 
     // Debuff Potions
     public static class DebuffPotion {
-        public static Item poison() {
-            return new Item("Poison", "Inflicts HP drain over time.", 0, 0, false, 0, 
-                          false, false, 0, 0, true, false, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Poison.jpg");
+        public static Item poison(Database database) {
+            return new Item(database, 15);
         }
 
-        public static Item silenceDust() {
-            return new Item("Silence Dust", "Prevents spellcasting.", 0, 0, false, 0, 
-                          false, false, 0, 0, false, true, false, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\Silence Dust.jpg");
+        public static Item silenceDust(Database database) {
+            return new Item(database, 16);
         }
 
-        public static Item paralyzeDust() {
-            return new Item("Paralyze Dust", "Stops all movement/actions.", 0, 0, false, 0, 
-                          false, false, 0, 0, false, false, true, 
-                          false, false, false, false, "Text-Based RPG\\Images\\Items\\paralyze dust.jpg");
+        public static Item paralyzeDust(Database database) {
+            return new Item(database, 17);
         }
     }
 
     // Cure Items
     public static class CureItem {
-        public static Item antidote() {
-            return new Item("Antidote", "Cures Poison.", 0, 0, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          true, false, false, false, "Text-Based RPG\\Images\\Items\\Antidote.jpg");
+        public static Item antidote(Database database) {
+            return new Item(database, 18);
         }
 
-        public static Item echoGrass() {
-            return new Item("Echo Grass", "Cures Silence.", 0, 0, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          false, true, false, false, "Text-Based RPG\\Images\\Items\\Echo Grass.jpg");
+        public static Item echoGrass(Database database) {
+            return new Item(database, 19);
         }
 
-        public static Item paralyzeHeal() {
-            return new Item("Paralyze Heal", "Cures Paralysis.", 0, 0, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          false, false, true, false, "");
+        public static Item paralyzeHeal(Database database) {
+            return new Item(database, 20);
         }
 
-        public static Item remedy() {
-            return new Item("Remedy", "Cures most status effects.", 0, 0, false, 0, 
-                          false, false, 0, 0, false, false, false, 
-                          true, true, true, true, "Text-Based RPG\\Images\\Items\\Remedy.jpg");
+        public static Item remedy(Database database) {
+            return new Item(database, 21);
         }
     }
 }
